@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CVEnhancer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260116152320_InitialCreate2")]
-    partial class InitialCreate2
+    [Migration("20260117130232_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -116,6 +116,21 @@ namespace CVEnhancer.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("GeneratedCVs");
+                });
+
+            modelBuilder.Entity("CVEnhancer.Models.ProfilePicture", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte[]>("Picture")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProfilePictures");
                 });
 
             modelBuilder.Entity("CVEnhancer.Models.Project", b =>
@@ -235,7 +250,12 @@ namespace CVEnhancer.Migrations
                     b.Property<string>("ProfessionalSummary")
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("ProfilePictureId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("UserId");
+
+                    b.HasIndex("ProfilePictureId");
 
                     b.ToTable("Users");
                 });
@@ -398,6 +418,15 @@ namespace CVEnhancer.Migrations
                         .IsRequired();
 
                     b.Navigation("Skill");
+                });
+
+            modelBuilder.Entity("CVEnhancer.Models.User", b =>
+                {
+                    b.HasOne("CVEnhancer.Models.ProfilePicture", "ProfilePicture")
+                        .WithMany()
+                        .HasForeignKey("ProfilePictureId");
+
+                    b.Navigation("ProfilePicture");
                 });
 
             modelBuilder.Entity("CVEnhancer.Models.WorkExperience", b =>

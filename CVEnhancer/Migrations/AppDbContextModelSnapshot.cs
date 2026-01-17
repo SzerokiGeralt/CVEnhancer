@@ -115,6 +115,21 @@ namespace CVEnhancer.Migrations
                     b.ToTable("GeneratedCVs");
                 });
 
+            modelBuilder.Entity("CVEnhancer.Models.ProfilePicture", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<byte[]>("Picture")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProfilePictures");
+                });
+
             modelBuilder.Entity("CVEnhancer.Models.Project", b =>
                 {
                     b.Property<int>("ProjectId")
@@ -232,7 +247,12 @@ namespace CVEnhancer.Migrations
                     b.Property<string>("ProfessionalSummary")
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("ProfilePictureId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("UserId");
+
+                    b.HasIndex("ProfilePictureId");
 
                     b.ToTable("Users");
                 });
@@ -395,6 +415,15 @@ namespace CVEnhancer.Migrations
                         .IsRequired();
 
                     b.Navigation("Skill");
+                });
+
+            modelBuilder.Entity("CVEnhancer.Models.User", b =>
+                {
+                    b.HasOne("CVEnhancer.Models.ProfilePicture", "ProfilePicture")
+                        .WithMany()
+                        .HasForeignKey("ProfilePictureId");
+
+                    b.Navigation("ProfilePicture");
                 });
 
             modelBuilder.Entity("CVEnhancer.Models.WorkExperience", b =>

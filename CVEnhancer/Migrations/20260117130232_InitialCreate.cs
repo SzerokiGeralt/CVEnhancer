@@ -12,6 +12,19 @@ namespace CVEnhancer.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "ProfilePictures",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Picture = table.Column<byte[]>(type: "BLOB", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProfilePictures", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SkillCategories",
                 columns: table => new
                 {
@@ -32,17 +45,23 @@ namespace CVEnhancer.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     FirstName = table.Column<string>(type: "TEXT", nullable: false),
                     LastName = table.Column<string>(type: "TEXT", nullable: false),
-                    Email = table.Column<string>(type: "TEXT", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "TEXT", nullable: false),
-                    LinkedInUrl = table.Column<string>(type: "TEXT", nullable: false),
-                    GitHubUrl = table.Column<string>(type: "TEXT", nullable: false),
-                    PortfolioUrl = table.Column<string>(type: "TEXT", nullable: false),
-                    ProfessionalSummary = table.Column<string>(type: "TEXT", nullable: false),
-                    JobTitle = table.Column<string>(type: "TEXT", nullable: false)
+                    ProfilePictureId = table.Column<int>(type: "INTEGER", nullable: true),
+                    Email = table.Column<string>(type: "TEXT", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "TEXT", nullable: true),
+                    LinkedInUrl = table.Column<string>(type: "TEXT", nullable: true),
+                    GitHubUrl = table.Column<string>(type: "TEXT", nullable: true),
+                    PortfolioUrl = table.Column<string>(type: "TEXT", nullable: true),
+                    ProfessionalSummary = table.Column<string>(type: "TEXT", nullable: true),
+                    JobTitle = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.UserId);
+                    table.ForeignKey(
+                        name: "FK_Users_ProfilePictures_ProfilePictureId",
+                        column: x => x.ProfilePictureId,
+                        principalTable: "ProfilePictures",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -349,6 +368,11 @@ namespace CVEnhancer.Migrations
                 column: "WorkExperiencesWorkExperienceId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Users_ProfilePictureId",
+                table: "Users",
+                column: "ProfilePictureId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_WorkExperiences_UserId",
                 table: "WorkExperiences",
                 column: "UserId");
@@ -395,6 +419,9 @@ namespace CVEnhancer.Migrations
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "ProfilePictures");
         }
     }
 }

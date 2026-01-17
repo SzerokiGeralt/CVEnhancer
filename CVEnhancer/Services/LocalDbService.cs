@@ -1,4 +1,5 @@
 ﻿using CVEnhancer.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,6 @@ namespace CVEnhancer.Services
             {
                 FirstName = "Karol",
                 LastName = "Kapusta"
-
             });
             await Db.SaveChangesAsync();
         }

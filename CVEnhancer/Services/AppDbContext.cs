@@ -15,21 +15,33 @@ namespace CVEnhancer.Data
         public DbSet<SkillAlias> SkillAliases { get; set; }
         public DbSet<SkillCategory> SkillCategories { get; set; }
         public DbSet<GeneratedCV> GeneratedCVs { get; set; }
+        public DbSet<ProfilePicture> ProfilePictures { get; set; }
 
         // Ścieżka do pliku bazy
         public string DbPath { get; }
 
         public AppDbContext()
         {
-            // MAUI - folder LocalApplicationData
-            var path = FileSystem.AppDataDirectory;
-            DbPath = Path.Combine(path, "CVELite.db");
+            try
+            {
+                // MAUI - folder LocalApplicationData (runtime)
+                var path = FileSystem.AppDataDirectory;
+                DbPath = Path.Combine(path, "CVELite.db");
+            }
+            catch
+            {
+                // Design-time - użyj temp path dla migracji
+                DbPath = Path.Combine(Path.GetTempPath(), "CVELite.db");
+            }
         }
 
         // Konfiguracja połączenia
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            options.UseSqlite($"Data Source={DbPath}");
+            if (!options.IsConfigured)
+            {
+                options.UseSqlite($"Data Source={DbPath}");
+            }
         }
     }
 }
