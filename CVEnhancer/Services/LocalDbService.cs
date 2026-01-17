@@ -1,4 +1,5 @@
 ﻿using CVEnhancer.Data;
+using CVEnhancer.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -18,14 +19,13 @@ namespace CVEnhancer.Services
             Db.Database.EnsureCreated();
         }
 
-        public async Task AddUser()
+        public async Task<List<User>> GetUsersWithPictures()
         {
-            Db.Add(new Models.User
-            {
-                FirstName = "Karol",
-                LastName = "Kapusta"
-            });
-            await Db.SaveChangesAsync();
+            // Dołącz ProfilePicture do zapytania
+            List<User> users = await Db.Users
+                .Include(u => u.ProfilePicture)
+                .ToListAsync();
+            return users;
         }
     }
 }

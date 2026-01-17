@@ -26,7 +26,7 @@
                        FontAttributes="Bold"
                        HorizontalOptions="Center" />
                 <CollectionView Grid.Row="1"
-                                ItemsSource="{Binding Profiles}"
+                                ItemsSource="{Binding UserProfiles}"
                                 SelectionMode="Single"
                                 HorizontalOptions="Center"
                                 VerticalOptions="Center"
@@ -37,7 +37,7 @@
                     </CollectionView.ItemsLayout>
 
                     <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="local:UserProfile">
+                        <DataTemplate x:DataType="local:UserViewModel">
                             <VerticalStackLayout WidthRequest="224"
                                                  Spacing="12"
                                                  Padding="8">
@@ -49,13 +49,13 @@
                                     <Border.StrokeShape>
                                         <RoundRectangle CornerRadius="44"/>
                                     </Border.StrokeShape>
-                                    <Image Source="{Binding ImageUrl}"
+                                    <Image Source="{Binding ProfileImageSource}"
                                            Aspect="AspectFill"
                                            WidthRequest="88"
                                            HeightRequest="88"/>
                                 </Border>
 
-                                <Label Text="{Binding Name}"
+                                <Label Text="{Binding FullName}"
                                        TextColor="{StaticResource Primary}" 
                                        FontSize="16"
                                        FontAttributes="Bold"

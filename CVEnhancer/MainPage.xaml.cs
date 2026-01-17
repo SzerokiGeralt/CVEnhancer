@@ -1,38 +1,45 @@
-﻿using CVEnhancer.Services;
+﻿using CVEnhancer.Models;
+using CVEnhancer.Services;
+using CVEnhancer.Utils;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace CVEnhancer
 {
-    // 1. Model danych (Prosty)
-    public class UserProfile
+    public class UserViewModel
     {
-        public string Name { get; set; }
-        public string ImageUrl { get; set; }
+        public User User { get; set; }
+        public string FirstName => User.FirstName;
+        public string LastName => User.LastName;
+        public string FullName => User.FirstName + " " + LastName;
+        public ImageSource ProfileImageSource => ImageByteConverter.ByteArrayToImageSource(User.ProfilePicture.Picture);
     }
 
     public partial class MainPage : ContentPage
     {
-        // Kolekcja profili widoczna dla XAMLa
-        public ObservableCollection<UserProfile> Profiles { get; set; } = new();
+        public ObservableCollection<UserViewModel> UserProfiles { get; set; } = new();
+
+        private readonly LocalDbService _localDbService;
 
         public MainPage(LocalDbService localDbService)
         {
             InitializeComponent();
 
-            // Ustawiamy ten plik jako źródło danych dla samego siebie
+            _localDbService = localDbService;
+
             BindingContext = this;
 
-            // Ładowanie przykładowych danych (Fake Data)
-            LoadProfiles();
+            LoadUsers();
         }
 
-        private void LoadProfiles()
+        private async void LoadUsers()
         {
-            Profiles.Add(new UserProfile { Name = "Jan Kowalski", ImageUrl = "https://picsum.photos/200" });
-            Profiles.Add(new UserProfile { Name = "Anna Nowak", ImageUrl = "https://picsum.photos/201" });
-            Profiles.Add(new UserProfile { Name = "Piotr Wiśniewski", ImageUrl = "https://picsum.photos/202" });
-            // Profiles.Add(new UserProfile { Name = "Maria Wójcik", ImageUrl = "https://picsum.photos/203" });
+            var users = await _localDbService.GetUsersWithPictures();
+
+            foreach (var user in users)
+            {
+                UserProfiles.Add(new UserViewModel { User = user });
+            }
         }
     }
 }
