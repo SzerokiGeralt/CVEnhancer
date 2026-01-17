@@ -4,11 +4,52 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:CVEnhancer"
-    Title="CVEnhancer">
+    Title="CV Pro"
+    FlyoutBehavior="Flyout">
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+    <!-- Lewy Navbar (Flyout Menu) -->
+    <Shell.FlyoutHeader>
+        <Grid>
+            <HorizontalStackLayout>
+                <Label Text="CV Enhancer"/>
+            </HorizontalStackLayout>
+        </Grid>
+    </Shell.FlyoutHeader>
+
+    <Shell.FlyoutFooter>
+        <Grid RowDefinitions="Auto,Auto">
+            <!-- Profil użytkownika -->
+            <HorizontalStackLayout Grid.Row="0">
+                <Label Text="{Binding UserDisplayName}"/>
+            </HorizontalStackLayout>
+            
+            <!-- Przycisk wylogowania -->
+            <Button Grid.Row="1" 
+                    Text="Wyloguj" 
+                    Command="{Binding LogoutCommand}"/>
+        </Grid>
+    </Shell.FlyoutFooter>
+
+    <!-- Login Page - startowa, bez menu -->
+    <ShellContent Route="LoginPage" 
+                  ContentTemplate="{DataTemplate local:MainPage}" 
+                  FlyoutItemIsVisible="False" />
+
+    <!-- Menu Items - widoczne po zalogowaniu -->
+    <FlyoutItem Title="Panel główny">
+        <ShellContent ContentTemplate="{DataTemplate local:DashboardPage}" Route="DashboardPage" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Generuj">
+        <ShellContent ContentTemplate="{DataTemplate local:GeneratePage}" Route="GeneratePage" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Biblioteka">
+        <ShellContent ContentTemplate="{DataTemplate local:LibraryPage}" Route="LibraryPage" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Dane Osobowe">
+        <ShellContent ContentTemplate="{DataTemplate local:DataPage}" Route="DataPage" />
+    </FlyoutItem>
 
 </Shell>

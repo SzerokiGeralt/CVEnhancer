@@ -28,11 +28,11 @@ namespace CVEnhancer
             InitializeComponent();
 
             _localDbService = localDbService;
+            _sessionService = sessionService;
 
             BindingContext = this;
 
             LoadUsers();
-            _sessionService = sessionService;
         }
 
         private async void LoadUsers()
@@ -45,23 +45,31 @@ namespace CVEnhancer
             }
         }
 
-        private void Profile_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void Profile_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             try
             {
+                if (e.CurrentSelection.Count == 0) return;
+                
                 int userId = (e.CurrentSelection.First() as UserViewModel).UserId;
-                SetActiveProfile(userId);
+                await SetActiveProfile(userId);
+                
+                await DisplayAlert("Zalogowano poprawnie", (e.CurrentSelection.First() as UserViewModel)?.FullName, "OK");
+                
+                // Po zalogowaniu przekieruj do Dashboard
+                await Shell.Current.GoToAsync("//DashboardPage");
             }
-            catch (Exception ex) {
-                DisplayAlert("Błąd","Wybrano nieprawidłowy profil" + ex.Message,"OK");
+            catch (Exception ex) 
+            {
+                await DisplayAlert("Błąd", "Wybrano nieprawidłowy profil: " + ex.Message, "OK");
                 return;
             }
-            DisplayAlert("Zalogowano poprawnie", (e.CurrentSelection.First() as UserViewModel)?.FullName, "OK");
         }
 
-        private async void SetActiveProfile(int userId) {
-            var x = await _localDbService.GetUserById(userId);
-            _sessionService.Login(x);
+        private async Task SetActiveProfile(int userId) 
+        {
+            var user = await _localDbService.GetUserById(userId);
+            _sessionService.Login(user);
         }
     }
 }

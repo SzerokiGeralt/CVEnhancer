@@ -15,9 +15,21 @@ namespace CVEnhancer
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
+            
+            // Services
             builder.Services.AddSingleton<LocalDbService>();
             builder.Services.AddSingleton<SessionService>();
+            
+            // Shell
+            builder.Services.AddSingleton<AppShell>();
+            
+            // Pages
             builder.Services.AddTransient<MainPage>();
+            builder.Services.AddTransient<DashboardPage>();
+            builder.Services.AddTransient<DataPage>();
+            builder.Services.AddTransient<LibraryPage>();
+            builder.Services.AddTransient<GeneratePage>();
+
 #if DEBUG
             builder.Logging.AddDebug();
 #endif

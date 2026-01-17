@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CVEnhancer.DataPage"
+             Title="Moje Dane">
+
+    <!-- Prawy Context Action Bar -->
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Dane Osobowe" Order="Secondary" />
+        <ToolbarItem Text="Doświadczenie" Order="Secondary" />
+        <ToolbarItem Text="Projekty" Order="Secondary" />
+        <ToolbarItem Text="Umiejętności" Order="Secondary" />
+        <ToolbarItem Text="Edukacja" Order="Secondary" />
+    </ContentPage.ToolbarItems>
+
+    <ScrollView>
+        <Label 
+            Text="Dane Osobowe"
+            VerticalOptions="Center" 
+            HorizontalOptions="Center" />
+    </ScrollView>
+
+</ContentPage>
