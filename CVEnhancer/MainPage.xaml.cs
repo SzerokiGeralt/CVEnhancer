@@ -9,6 +9,7 @@ namespace CVEnhancer
     public class UserViewModel
     {
         public User User { get; set; }
+        public int UserId => User.UserId;
         public string FirstName => User.FirstName;
         public string LastName => User.LastName;
         public string FullName => User.FirstName + " " + LastName;
@@ -20,8 +21,9 @@ namespace CVEnhancer
         public ObservableCollection<UserViewModel> UserProfiles { get; set; } = new();
 
         private readonly LocalDbService _localDbService;
+        private readonly SessionService _sessionService;
 
-        public MainPage(LocalDbService localDbService)
+        public MainPage(LocalDbService localDbService, SessionService sessionService)
         {
             InitializeComponent();
 
@@ -30,6 +32,7 @@ namespace CVEnhancer
             BindingContext = this;
 
             LoadUsers();
+            _sessionService = sessionService;
         }
 
         private async void LoadUsers()
@@ -40,6 +43,25 @@ namespace CVEnhancer
             {
                 UserProfiles.Add(new UserViewModel { User = user });
             }
+        }
+
+        private void Profile_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                int userId = (e.CurrentSelection.First() as UserViewModel).UserId;
+                SetActiveProfile(userId);
+            }
+            catch (Exception ex) {
+                DisplayAlert("Błąd","Wybrano nieprawidłowy profil" + ex.Message,"OK");
+                return;
+            }
+            DisplayAlert("Zalogowano poprawnie", (e.CurrentSelection.First() as UserViewModel)?.FullName, "OK");
+        }
+
+        private async void SetActiveProfile(int userId) {
+            var x = await _localDbService.GetUserById(userId);
+            _sessionService.Login(x);
         }
     }
 }

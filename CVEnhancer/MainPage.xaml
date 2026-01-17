@@ -26,6 +26,7 @@
                        FontAttributes="Bold"
                        HorizontalOptions="Center" />
                 <CollectionView Grid.Row="1"
+                                SelectionChanged="Profile_SelectionChanged"
                                 ItemsSource="{Binding UserProfiles}"
                                 SelectionMode="Single"
                                 HorizontalOptions="Center"

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CVEnhancer.Services
 {
-    internal class SessionService
+    public class SessionService
     {
         public User? ActiveUser { get; private set; }
 

@@ -27,5 +27,9 @@ namespace CVEnhancer.Services
                 .ToListAsync();
             return users;
         }
+
+        public async Task<User> GetUserById(int Id) {
+            return await Db.Users.Where(x => x.UserId == Id).FirstAsync();
+        }
     }
 }
