@@ -42,54 +42,7 @@ namespace CVEnhancer.Data
             if (!options.IsConfigured)
             {
                 options.UseSqlite($"Data Source={DbPath}");
-                options.UseSeeding((context, _) =>
-                {
-                    // Sprawdź czy użytkownicy już istnieją
-                    var existingUser = context.Set<User>().FirstOrDefault();
-                    if (existingUser == null)
-                    {
-                        // Dodaj przykładowych użytkowników
-                        context.Set<User>().AddRange(
-                            new User
-                            {
-                                FirstName = "Jan",
-                                LastName = "Kowalski",
-                                ProfilePicture = new ProfilePicture() {Picture = ImageByteConverter.defaultImage },
-                                Email = "jan.kowalski@example.com",
-                                PhoneNumber = "+48 123 456 789",
-                                LinkedInUrl = "https://linkedin.com/in/jankowalski",
-                                GitHubUrl = "https://github.com/jankowalski",
-                                JobTitle = "Senior .NET Developer",
-                                ProfessionalSummary = "Doświadczony programista .NET z 5-letnim stażem w tworzeniu aplikacji enterprise."
-                            },
-                            new User
-                            {
-                                FirstName = "Anna",
-                                LastName = "Nowak",
-                                ProfilePicture = new ProfilePicture() { Picture = ImageByteConverter.defaultImage },
-                                Email = "anna.nowak@example.com",
-                                PhoneNumber = "+48 987 654 321",
-                                LinkedInUrl = "https://linkedin.com/in/annanowak",
-                                GitHubUrl = "https://github.com/annanowak",
-                                JobTitle = "Full Stack Developer",
-                                ProfessionalSummary = "Wszechstronna programistka z pasją do tworzenia nowoczesnych aplikacji webowych i mobilnych."
-                            },
-                            new User
-                            {
-                                FirstName = "Piotr",
-                                LastName = "Wiśniewski",
-                                ProfilePicture = new ProfilePicture() { Picture = ImageByteConverter.defaultImage },
-                                Email = "piotr.wisniewski@example.com",
-                                PhoneNumber = "+48 555 123 456",
-                                LinkedInUrl = "https://linkedin.com/in/piotrwisniewski",
-                                PortfolioUrl = "https://piotrwisniewski.dev",
-                                JobTitle = "Junior Software Developer",
-                                ProfessionalSummary = "Młody programista pełen entuzjazmu, specjalizujący się w technologiach Microsoft."
-                            }
-                        );
-                        context.SaveChanges();
-                    }
-                });
+                options.UseSeeding((context, _) => DbSeeder.SeedDatabase(context));
             }
         }
 
