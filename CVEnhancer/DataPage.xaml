@@ -4,20 +4,77 @@
              x:Class="CVEnhancer.DataPage"
              Title="Moje Dane">
 
-    <!-- Prawy Context Action Bar -->
-    <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Dane Osobowe" Order="Secondary" />
-        <ToolbarItem Text="Doświadczenie" Order="Secondary" />
-        <ToolbarItem Text="Projekty" Order="Secondary" />
-        <ToolbarItem Text="Umiejętności" Order="Secondary" />
-        <ToolbarItem Text="Edukacja" Order="Secondary" />
-    </ContentPage.ToolbarItems>
+    <Grid RowDefinitions="Auto,*">
+        <!-- Zakładki -->
+        <HorizontalStackLayout Grid.Row="0" Spacing="10" Padding="10">
+            <Button Text="Dane Osobowe" Clicked="OnPersonalDataClicked" x:Name="PersonalDataTab" />
+            <Button Text="Praca" Clicked="OnWorkClicked" x:Name="WorkTab" />
+            <Button Text="Edukacja" Clicked="OnEducationClicked" x:Name="EducationTab" />
+            <Button Text="Projekty" Clicked="OnProjectsClicked" x:Name="ProjectsTab" />
+        </HorizontalStackLayout>
 
-    <ScrollView>
-        <Label 
-            Text="Dane Osobowe"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </ScrollView>
+        <!-- Zawartość zakładek -->
+        <ScrollView Grid.Row="1" Padding="20">
+            <VerticalStackLayout Spacing="15" x:Name="ContentArea">
+                
+                <!-- Dane Osobowe -->
+                <VerticalStackLayout x:Name="PersonalDataContent" Spacing="10">
+                    <Label Text="Dane Osobowe" FontSize="24" />
+                    <Entry Placeholder="Imię" />
+                    <Entry Placeholder="Nazwisko" />
+                    <Entry Placeholder="Email" Keyboard="Email" />
+                    <Entry Placeholder="Telefon" Keyboard="Telephone" />
+                    <Entry Placeholder="LinkedIn URL" />
+                    <Entry Placeholder="GitHub URL" />
+                    <Entry Placeholder="Portfolio URL" />
+                    <Entry Placeholder="Stanowisko" />
+                    <Editor Placeholder="Podsumowanie profesjonalne" HeightRequest="100" />
+                    <Button Text="Zapisz" />
+                </VerticalStackLayout>
+
+                <!-- Praca -->
+                <VerticalStackLayout x:Name="WorkContent" Spacing="10" IsVisible="False">
+                    <Label Text="Doświadczenie Zawodowe" FontSize="24" />
+                    <Entry Placeholder="Nazwa firmy" />
+                    <Entry Placeholder="Stanowisko" />
+                    <DatePicker />
+                    <Label Text="Data rozpoczęcia" />
+                    <DatePicker />
+                    <Label Text="Data zakończenia (opcjonalnie)" />
+                    <Editor Placeholder="Opis obowiązków" HeightRequest="100" />
+                    <Button Text="Dodaj wpis" />
+                    <Label Text="Lista doświadczeń:" FontSize="18" Margin="0,20,0,10" />
+                    <CollectionView x:Name="WorkExperienceList" HeightRequest="200" />
+                </VerticalStackLayout>
+
+                <!-- Edukacja -->
+                <VerticalStackLayout x:Name="EducationContent" Spacing="10" IsVisible="False">
+                    <Label Text="Edukacja" FontSize="24" />
+                    <Entry Placeholder="Nazwa uczelni" />
+                    <Entry Placeholder="Kierunek studiów" />
+                    <Entry Placeholder="Stopień" />
+                    <DatePicker />
+                    <Label Text="Data rozpoczęcia" />
+                    <DatePicker />
+                    <Label Text="Data zakończenia (opcjonalnie)" />
+                    <Button Text="Dodaj wpis" />
+                    <Label Text="Lista edukacji:" FontSize="18" Margin="0,20,0,10" />
+                    <CollectionView x:Name="EducationList" HeightRequest="200" />
+                </VerticalStackLayout>
+
+                <!-- Projekty -->
+                <VerticalStackLayout x:Name="ProjectsContent" Spacing="10" IsVisible="False">
+                    <Label Text="Projekty" FontSize="24" />
+                    <Entry Placeholder="Nazwa projektu" />
+                    <Editor Placeholder="Opis projektu" HeightRequest="100" />
+                    <Entry Placeholder="URL projektu (opcjonalnie)" />
+                    <Button Text="Dodaj projekt" />
+                    <Label Text="Lista projektów:" FontSize="18" Margin="0,20,0,10" />
+                    <CollectionView x:Name="ProjectsList" HeightRequest="200" />
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
 
 </ContentPage>

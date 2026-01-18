@@ -4,10 +4,36 @@
              x:Class="CVEnhancer.LibraryPage"
              Title="Biblioteka">
 
-    <ScrollView>
-        <Label 
-            Text="Biblioteka!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </ScrollView>
+    <Grid RowDefinitions="Auto,*" Padding="20">
+        <Label Grid.Row="0" 
+               Text="Twoje wygenerowane CV" 
+               FontSize="24" 
+               Margin="0,0,0,20" />
+        
+        <ScrollView Grid.Row="1">
+            <CollectionView x:Name="CVCollection">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Margin="0,5" Padding="15">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <VerticalStackLayout Grid.Column="0" Spacing="5">
+                                    <Label Text="{Binding Title}" FontSize="18" FontAttributes="Bold" />
+                                    <Label Text="{Binding LastModifiedDate, StringFormat='Ostatnia modyfikacja: {0:dd.MM.yyyy HH:mm}'}" FontSize="12" />
+                                </VerticalStackLayout>
+                                <Button Grid.Column="1" 
+                                        Text="Otwórz" 
+                                        VerticalOptions="Center" />
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.EmptyView>
+                    <Label Text="Brak wygenerowanych CV" 
+                           HorizontalOptions="Center" 
+                           VerticalOptions="Center" 
+                           Margin="0,50,0,0" />
+                </CollectionView.EmptyView>
+            </CollectionView>
+        </ScrollView>
+    </Grid>
 </ContentPage>

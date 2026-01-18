@@ -10,5 +10,12 @@
             <Label Text="Zarządzaj swoim CV..." TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Magenta}}" />
         </VerticalStackLayout>
     </ScrollView>
+    <VerticalStackLayout Padding="20" Spacing="20" VerticalOptions="Center">
+        <Button Text="Przejdź do Biblioteki" 
+                Clicked="OnGoToLibraryClicked" />
+        
+        <Button Text="Generuj nowe CV" 
+                Clicked="OnGoToGenerateClicked" />
+    </VerticalStackLayout>
 
 </ContentPage>

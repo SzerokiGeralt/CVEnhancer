@@ -3,10 +3,25 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="CVEnhancer.GeneratePage"
              Title="Generuj">
-    <ScrollView>
-        <Label 
-            Text="Wygeneruj nowe CV!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+    <ScrollView Padding="20">
+        <VerticalStackLayout Spacing="20">
+            <Label Text="Wygeneruj nowe CV" FontSize="24" />
+            
+            <Editor x:Name="JobDescriptionEditor"
+                    Placeholder="Wklej ogłoszenie..." 
+                    HeightRequest="300" 
+                    VerticalOptions="Start" />
+            
+            <Label Text="lub" 
+                   HorizontalOptions="Center" 
+                   FontSize="16" />
+            
+            <Button Text="Załącz PDF" 
+                    Clicked="OnAttachPdfClicked" />
+            
+            <Button Text="Analizuj" 
+                    Clicked="OnAnalyzeClicked" 
+                    Margin="0,20,0,0" />
+        </VerticalStackLayout>
     </ScrollView>
 </ContentPage>
