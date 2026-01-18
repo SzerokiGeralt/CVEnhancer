@@ -20,6 +20,7 @@ public partial class DataPage : ContentPage
     {
         base.OnAppearing();
         await LoadPersonalDataAsync();
+        await LoadWorkExperiencesAsync();
     }
 
     private async Task LoadPersonalDataAsync()
@@ -93,11 +94,76 @@ public partial class DataPage : ContentPage
 		ShowPersonalData();
 	}
 
-	private void OnWorkClicked(object sender, EventArgs e)
+    private async Task LoadWorkExperiencesAsync()
+    {
+        if (_sessionService.ActiveUser == null) return;
+
+        var items = await _profileService.GetWorkExperiencesAsync(_sessionService.ActiveUser.UserId);
+        WorkExperienceList.ItemsSource = items;
+    }
+
+    private async void OnAddWorkExperienceClicked(object sender, EventArgs e)
+    {
+        if (_sessionService.ActiveUser == null)
+        {
+            await DisplayAlert("B³¹d", "Brak aktywnego u¿ytkownika.", "OK");
+            return;
+        }
+
+        var company = CompanyEntry.Text?.Trim();
+        var title = WorkJobTitleEntry.Text?.Trim();
+        var desc = WorkDescriptionEditor.Text?.Trim();
+
+        if (string.IsNullOrWhiteSpace(company) || string.IsNullOrWhiteSpace(title))
+        {
+            await DisplayAlert("Walidacja", "Firma i stanowisko s¹ wymagane.", "OK");
+            return;
+        }
+
+        DateTime? end = EndDatePicker.Date;
+        if (end.Value.Date < StartDatePicker.Date)
+            end = null;
+
+        var work = new WorkExperience
+        {
+            CompanyName = company,
+            JobTitle = title,
+            StartDate = StartDatePicker.Date,
+            EndDate = end,
+            Description = desc ?? ""
+        };
+
+        await _profileService.AddWorkExperienceAsync(_sessionService.ActiveUser.UserId, work);
+
+        // wyczyœæ formularz
+        CompanyEntry.Text = "";
+        WorkJobTitleEntry.Text = "";
+        WorkDescriptionEditor.Text = "";
+        StartDatePicker.Date = DateTime.Today;
+        EndDatePicker.Date = DateTime.Today;
+
+        await LoadWorkExperiencesAsync();
+    }
+
+    private async void OnDeleteWorkExperienceClicked(object sender, EventArgs e)
+    {
+        if (_sessionService.ActiveUser == null) return;
+
+        if (sender is Button btn && btn.CommandParameter is int workId)
+        {
+            bool confirm = await DisplayAlert("PotwierdŸ", "Usun¹æ wpis?", "Tak", "Nie");
+            if (!confirm) return;
+
+            await _profileService.DeleteWorkExperienceAsync(_sessionService.ActiveUser.UserId, workId);
+            await LoadWorkExperiencesAsync();
+        }
+    }
+    private async void OnWorkClicked(object sender, EventArgs e)
 	{
 		HideAllContent();
 		WorkContent.IsVisible = true;
-	}
+        await LoadWorkExperiencesAsync();
+    }
 
 	private void OnEducationClicked(object sender, EventArgs e)
 	{

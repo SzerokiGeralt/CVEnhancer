@@ -1,4 +1,6 @@
-﻿namespace CVEnhancer.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace CVEnhancer.Models
 {
     public class WorkExperience
     {
@@ -10,5 +12,11 @@
         public DateTime? EndDate { get; set; }
         public string Description { get; set; }
         public List<Skill> Skills { get; set; } = new();
+
+        [NotMapped]
+        public string DateRangeText =>
+            EndDate.HasValue
+                ? $"{StartDate:yyyy-MM} - {EndDate:yyyy-MM}"
+                : $"{StartDate:yyyy-MM} - obecnie";
     }
 }

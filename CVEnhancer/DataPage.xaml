@@ -36,16 +36,40 @@
                 <!-- Praca -->
                 <VerticalStackLayout x:Name="WorkContent" Spacing="10" IsVisible="False">
                     <Label Text="Doświadczenie Zawodowe" FontSize="24" />
-                    <Entry Placeholder="Nazwa firmy" />
-                    <Entry Placeholder="Stanowisko" />
-                    <DatePicker />
+
+                    <Entry x:Name="CompanyEntry" Placeholder="Nazwa firmy" />
+                    <Entry x:Name="WorkJobTitleEntry" Placeholder="Stanowisko" />
+
                     <Label Text="Data rozpoczęcia" />
-                    <DatePicker />
+                    <DatePicker x:Name="StartDatePicker" />
+
                     <Label Text="Data zakończenia (opcjonalnie)" />
-                    <Editor Placeholder="Opis obowiązków" HeightRequest="100" />
-                    <Button Text="Dodaj wpis" />
+                    <DatePicker x:Name="EndDatePicker" />
+
+                    <Editor x:Name="WorkDescriptionEditor" Placeholder="Opis obowiązków" HeightRequest="100" />
+
+                    <Button Text="Dodaj wpis" Clicked="OnAddWorkExperienceClicked" />
+
                     <Label Text="Lista doświadczeń:" FontSize="18" Margin="0,20,0,10" />
-                    <CollectionView x:Name="WorkExperienceList" HeightRequest="200" />
+
+                    <CollectionView x:Name="WorkExperienceList" HeightRequest="200">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Frame Padding="10" Margin="0,0,0,10">
+                                    <VerticalStackLayout Spacing="5">
+                                        <Label Text="{Binding CompanyName}" FontAttributes="Bold" />
+                                        <Label Text="{Binding JobTitle}" />
+                                        <Label Text="{Binding DateRangeText}" FontSize="12" />
+                                        <Label Text="{Binding Description}" FontSize="12" LineBreakMode="TailTruncation" MaxLines="3" />
+
+                                        <Button Text="Usuń"
+                                CommandParameter="{Binding WorkExperienceId}"
+                                Clicked="OnDeleteWorkExperienceClicked" />
+                                    </VerticalStackLayout>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
                 </VerticalStackLayout>
 
                 <!-- Edukacja -->
