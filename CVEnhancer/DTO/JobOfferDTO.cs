@@ -8,5 +8,6 @@ namespace CVEnhancer.DTO
 {
     internal class JobOfferDTO
     {
+        public string RawText { get; set; } = "";
     }
 }
