@@ -18,12 +18,25 @@
         </HorizontalStackLayout>
 
         <!-- Zawartość zakładek -->
-        <ScrollView Grid.Row="1" Padding="20">
+        <ScrollView Grid.Row="1" Padding="20" VerticalScrollBarVisibility="Always">
             <VerticalStackLayout Spacing="15" x:Name="ContentArea">
                 
                 <!-- Dane Osobowe -->
                 <VerticalStackLayout x:Name="PersonalDataContent" Spacing="10">
                     <Label Text="Dane Osobowe" FontSize="24" />
+                    <Border WidthRequest="160"
+                            HeightRequest="160"
+                            StrokeThickness="0"
+                            HorizontalOptions="Center">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="160"/>
+                        </Border.StrokeShape>
+                        <Image Source="{Binding ProfileImageSource}"
+                               Aspect="AspectFill"
+                               WidthRequest="160"
+                               HeightRequest="160"/>
+                    </Border>
+                    <Button Text="Wybierz nowe zdjęcie" Clicked="ChangeProfilePictureClicked" />
                     <Entry Placeholder="Imię" Text="{Binding CurrentUser.FirstName}" />
                     <Entry Placeholder="Nazwisko" Text="{Binding CurrentUser.LastName}" />
                     <Entry Placeholder="Email" Text="{Binding CurrentUser.Email}" Keyboard="Email" />

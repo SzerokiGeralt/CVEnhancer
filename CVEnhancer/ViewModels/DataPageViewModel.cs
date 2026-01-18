@@ -1,7 +1,9 @@
 using CVEnhancer.Models;
 using CVEnhancer.Services;
+using CVEnhancer.Utils;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
@@ -34,6 +36,12 @@ namespace CVEnhancer.ViewModels
         {
             get => CurrentWork.EndDate ?? DateTime.Today;
             set => CurrentWork.EndDate = value;
+        }
+
+        private ImageSource _imageSource;
+        public ImageSource ProfileImageSource {
+            get { return _imageSource; }
+            set { _imageSource = value; OnPropertyChanged(); }
         }
 
         // ===== EDUCATION =====
@@ -83,6 +91,7 @@ namespace CVEnhancer.ViewModels
         public ICommand DeleteProjectCommand { get; }
         public ICommand DeleteCertificateCommand { get; }
         public ICommand DeleteProfileCommand { get; }
+        public ICommand ChangeProfilePictureCommand {  get; }
 
         public DataPageViewModel(LocalDbService db, SessionService session)
         {
@@ -100,8 +109,17 @@ namespace CVEnhancer.ViewModels
             DeleteEducationCommand = new Command<Education>(async e => await DeleteEducation(e));
             DeleteProjectCommand = new Command<Project>(async p => await DeleteProject(p));
             DeleteCertificateCommand = new Command<Certificate>(async c => await DeleteCertificate(c));
+            ChangeProfilePictureCommand = new Command<Stream>(async stream => await ChangeProfilePicture(stream));
 
             LoadData();
+        }
+
+        private async Task ChangeProfilePicture(Stream stream)
+        {
+            CurrentUser.ProfilePicture.Picture = await ImageByteConverter.StreamToByteArrayAsync(stream);
+            await _db.UpdateUser(CurrentUser);
+            ProfileImageSource = ImageByteConverter.ByteArrayToImageSource(CurrentUser.ProfilePicture.Picture);
+            OnPropertyChanged(nameof(ProfileImageSource));
         }
 
         private async void LoadData()
@@ -122,6 +140,9 @@ namespace CVEnhancer.ViewModels
             foreach (var e in user.Educations) Educations.Add(e);
             foreach (var p in user.Projects) Projects.Add(p);
             foreach (var c in user.Certificates) Certificates.Add(c);
+
+            ProfileImageSource = ImageByteConverter.ByteArrayToImageSource(CurrentUser.ProfilePicture.Picture);
+            OnPropertyChanged(nameof(ProfileImageSource));
 
             OnPropertyChanged(nameof(CurrentUser));
         }

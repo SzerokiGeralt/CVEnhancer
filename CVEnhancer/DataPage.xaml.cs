@@ -54,4 +54,33 @@ public partial class DataPage : ContentPage
             await DisplayAlert("B³¹d zapisywania", ex.Message, "OK");
         }
     }
+
+    private async void ChangeProfilePictureClicked(object sender, EventArgs e)
+    {
+        PickOptions options = new()
+        {
+            PickerTitle = "Please select a comic file"
+        };
+
+        try
+        {
+            var result = await FilePicker.Default.PickAsync(options);
+            if (result != null)
+            {
+                if (result.FileName.EndsWith("jpg", StringComparison.OrdinalIgnoreCase) ||
+                    result.FileName.EndsWith("png", StringComparison.OrdinalIgnoreCase))
+                {
+                    using var stream = await result.OpenReadAsync();
+
+                    _viewModel.ChangeProfilePictureCommand.Execute(stream);
+
+                    await DisplayAlert("Uwaga", "Poprawnie zmieniono zdjêcie profilowe", "OK");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("B³¹d", ex.Message, "OK");
+        }
+    }
 }
