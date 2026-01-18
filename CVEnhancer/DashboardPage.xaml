@@ -4,13 +4,11 @@
              x:Class="CVEnhancer.DashboardPage"
              Title="Dashboard">
 
-    <ScrollView Padding="40">
-        <VerticalStackLayout Spacing="20">
-            <Label Text="Witaj, Jan!" Style="{StaticResource Headline}" />
-            <Label Text="Zarządzaj swoim CV..." TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Magenta}}" />
-        </VerticalStackLayout>
-    </ScrollView>
     <VerticalStackLayout Padding="20" Spacing="20" VerticalOptions="Center">
+        <Label Text="{Binding FirstName, StringFormat='Witaj {0}!'}"  Style="{StaticResource Headline}"/>
+        
+        <Label Text="Zarządzaj swoimi CV" />
+        
         <Button Text="Przejdź do Biblioteki" 
                 Clicked="OnGoToLibraryClicked" />
         

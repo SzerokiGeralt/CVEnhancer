@@ -1,11 +1,18 @@
+using CVEnhancer.Services;
+
 namespace CVEnhancer;
 
 public partial class DashboardPage : ContentPage
 {
-	public DashboardPage()
+	private SessionService _sessionService;
+	public string FirstName { get; set; } = string.Empty;
+    public DashboardPage(LocalDbService localDbService, SessionService sessionService)
 	{
-		InitializeComponent();
-	}
+        InitializeComponent();
+        _sessionService = sessionService;
+		FirstName = _sessionService.ActiveUser.FirstName;
+        BindingContext = this;
+    }
 
 	private async void OnGoToLibraryClicked(object sender, EventArgs e)
 	{
