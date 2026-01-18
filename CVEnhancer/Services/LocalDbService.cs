@@ -38,8 +38,10 @@ namespace CVEnhancer.Services
         {
             return await Db.Users
                 .Include(u => u.WorkExperiences)
-                .Include(u => u.Educations)
+                    .ThenInclude(w => w.Skills)
                 .Include(u => u.Projects)
+                    .ThenInclude(p => p.Skills)
+                .Include(u => u.Educations)
                 .Include(u => u.Certificates)
                 .FirstOrDefaultAsync(u => u.UserId == userId);
         }

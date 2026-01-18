@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace CVEnhancer.DTO
 {
-    internal class ExtractedSkillsDTO
+    public class ExtractedSkillsDTO
     {
+        public List<string> Keywords { get; set; } = new();
     }
 }

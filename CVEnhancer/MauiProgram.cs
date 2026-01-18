@@ -19,7 +19,10 @@ namespace CVEnhancer
             // Services
             builder.Services.AddSingleton<LocalDbService>();
             builder.Services.AddSingleton<SessionService>();
-            
+            builder.Services.AddSingleton<ExtractionService>();
+            builder.Services.AddSingleton<MatchingService>();
+            builder.Services.AddSingleton<AnalysisService>();
+
             // Shell
             builder.Services.AddSingleton<AppShell>();
             

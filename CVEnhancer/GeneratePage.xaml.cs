@@ -1,11 +1,15 @@
+using CVEnhancer.Services;
 namespace CVEnhancer;
+
 
 public partial class GeneratePage : ContentPage
 {
-	public GeneratePage()
+    private readonly AnalysisService _analysis;
+    public GeneratePage(AnalysisService analysis)
 	{
 		InitializeComponent();
-	}
+        _analysis = analysis;
+    }
 
 	private async void OnAttachPdfClicked(object sender, EventArgs e)
 	{
@@ -23,7 +27,22 @@ public partial class GeneratePage : ContentPage
 			await DisplayAlert("B³¹d", "Wklej og³oszenie lub za³¹cz PDF", "OK");
 			return;
 		}
-		
-		await DisplayAlert("Info", "Analiza og³oszenia - do implementacji", "OK");
-	}
+
+        try
+        {
+            var result = await _analysis.AnalyzeJobOfferAsync(jobDescription);
+
+            // MVP: poka¿ w Alert najwa¿niejsze info
+            var msg =
+                $"Overall: {result.OverallScore:0.00}\n\n" +
+                $"Top projekty:\n- {string.Join("\n- ", result.TopProjects.Select(p => $"{p.Title} ({p.Score:0.00})"))}\n\n" +
+                $"Top doœwiadczenia:\n- {string.Join("\n- ", result.TopWorkExperiences.Select(w => $"{w.Title} ({w.Score:0.00})"))}";
+
+            await DisplayAlert("Wynik dopasowania", msg, "OK");
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("B³¹d analizy", ex.Message, "OK");
+        }
+    }
 }
