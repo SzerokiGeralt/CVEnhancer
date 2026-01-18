@@ -9,6 +9,8 @@ namespace CVEnhancer.Models
     public class ProfilePicture
     {
         public int Id { get; set; }
+        public User User { get; set; }
+        public int UserId { get; set; }
         public byte[] Picture { get; set; }
     }
 }

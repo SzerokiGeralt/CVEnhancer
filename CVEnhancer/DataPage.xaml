@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:CVEnhancer.ViewModels"
+             xmlns:models="clr-namespace:CVEnhancer.Models"
              x:Class="CVEnhancer.DataPage"
+             x:DataType="vm:DataPageViewModel"
              Title="Moje Dane">
 
     <Grid RowDefinitions="Auto,*">
@@ -11,6 +14,7 @@
             <Button Text="Praca" Clicked="OnWorkClicked" x:Name="WorkTab" />
             <Button Text="Edukacja" Clicked="OnEducationClicked" x:Name="EducationTab" />
             <Button Text="Projekty" Clicked="OnProjectsClicked" x:Name="ProjectsTab" />
+            <Button Text="Certyfikaty" Clicked="OnCertificatesClicked" x:Name="CertificatesTab" />
         </HorizontalStackLayout>
 
         <!-- Zawartość zakładek -->
@@ -20,57 +24,130 @@
                 <!-- Dane Osobowe -->
                 <VerticalStackLayout x:Name="PersonalDataContent" Spacing="10">
                     <Label Text="Dane Osobowe" FontSize="24" />
-                    <Entry Placeholder="Imię" />
-                    <Entry Placeholder="Nazwisko" />
-                    <Entry Placeholder="Email" Keyboard="Email" />
-                    <Entry Placeholder="Telefon" Keyboard="Telephone" />
-                    <Entry Placeholder="LinkedIn URL" />
-                    <Entry Placeholder="GitHub URL" />
-                    <Entry Placeholder="Portfolio URL" />
-                    <Entry Placeholder="Stanowisko" />
-                    <Editor Placeholder="Podsumowanie profesjonalne" HeightRequest="100" />
-                    <Button Text="Zapisz" />
+                    <Entry Placeholder="Imię" Text="{Binding CurrentUser.FirstName}" />
+                    <Entry Placeholder="Nazwisko" Text="{Binding CurrentUser.LastName}" />
+                    <Entry Placeholder="Email" Text="{Binding CurrentUser.Email}" Keyboard="Email" />
+                    <Entry Placeholder="Telefon" Text="{Binding CurrentUser.PhoneNumber}" Keyboard="Telephone" />
+                    <Entry Placeholder="LinkedIn URL" Text="{Binding CurrentUser.LinkedInUrl}" />
+                    <Entry Placeholder="GitHub URL" Text="{Binding CurrentUser.GitHubUrl}" />
+                    <Entry Placeholder="Portfolio URL" Text="{Binding CurrentUser.PortfolioUrl}" />
+                    <Entry Placeholder="Stanowisko" Text="{Binding CurrentUser.JobTitle}" />
+                    <Editor Placeholder="Podsumowanie profesjonalne" Text="{Binding CurrentUser.ProfessionalSummary}" HeightRequest="100" />
+                    <Button Text="Zapisz zmiany" Clicked="SaveClicked" />
+                    <Button Text="Usuń Profil" Clicked="DeleteProfileClicked" BackgroundColor="Red" TextColor="White"/>
                 </VerticalStackLayout>
 
                 <!-- Praca -->
                 <VerticalStackLayout x:Name="WorkContent" Spacing="10" IsVisible="False">
                     <Label Text="Doświadczenie Zawodowe" FontSize="24" />
-                    <Entry Placeholder="Nazwa firmy" />
-                    <Entry Placeholder="Stanowisko" />
-                    <DatePicker />
+                    <Entry Placeholder="Nazwa firmy" Text="{Binding CurrentWork.CompanyName}" />
+                    <Entry Placeholder="Stanowisko" Text="{Binding CurrentWork.JobTitle}" />
                     <Label Text="Data rozpoczęcia" />
-                    <DatePicker />
+                    <DatePicker Date="{Binding CurrentWork.StartDate}" />
                     <Label Text="Data zakończenia (opcjonalnie)" />
-                    <Editor Placeholder="Opis obowiązków" HeightRequest="100" />
-                    <Button Text="Dodaj wpis" />
+                    <DatePicker Date="{Binding WorkEndDate}" />
+                    <Editor Placeholder="Opis obowiązków" Text="{Binding CurrentWork.Description}" HeightRequest="100" />
+                    <Button Text="Dodaj wpis" Command="{Binding AddWorkCommand}" />
+                    
                     <Label Text="Lista doświadczeń:" FontSize="18" Margin="0,20,0,10" />
-                    <CollectionView x:Name="WorkExperienceList" HeightRequest="200" />
+                    <CollectionView ItemsSource="{Binding WorkExperiences}" HeightRequest="200">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:WorkExperience">
+                                <Border Padding="10" Margin="0,5">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="{Binding JobTitle}" VerticalOptions="Center" />
+                                        <Button Grid.Column="1" Text="Usuń" 
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteWorkCommand}"
+                                                CommandParameter="{Binding .}" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
                 </VerticalStackLayout>
 
                 <!-- Edukacja -->
                 <VerticalStackLayout x:Name="EducationContent" Spacing="10" IsVisible="False">
                     <Label Text="Edukacja" FontSize="24" />
-                    <Entry Placeholder="Nazwa uczelni" />
-                    <Entry Placeholder="Kierunek studiów" />
-                    <Entry Placeholder="Stopień" />
-                    <DatePicker />
+                    <Entry Placeholder="Nazwa uczelni" Text="{Binding CurrentEducation.InstitutionName}" />
+                    <Entry Placeholder="Kierunek studiów" Text="{Binding CurrentEducation.FieldOfStudy}" />
+                    <Entry Placeholder="Stopień" Text="{Binding CurrentEducation.Degree}" />
                     <Label Text="Data rozpoczęcia" />
-                    <DatePicker />
+                    <DatePicker Date="{Binding CurrentEducation.StartDate}" />
                     <Label Text="Data zakończenia (opcjonalnie)" />
-                    <Button Text="Dodaj wpis" />
+                    <DatePicker Date="{Binding EducationEndDate}" />
+                    <Button Text="Dodaj wpis" Command="{Binding AddEducationCommand}" />
+                    
                     <Label Text="Lista edukacji:" FontSize="18" Margin="0,20,0,10" />
-                    <CollectionView x:Name="EducationList" HeightRequest="200" />
+                    <CollectionView ItemsSource="{Binding Educations}" HeightRequest="200">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Education">
+                                <Border Padding="10" Margin="0,5">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="{Binding InstitutionName}" VerticalOptions="Center" />
+                                        <Button Grid.Column="1" Text="Usuń" 
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteEducationCommand}"
+                                                CommandParameter="{Binding .}" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
                 </VerticalStackLayout>
 
                 <!-- Projekty -->
                 <VerticalStackLayout x:Name="ProjectsContent" Spacing="10" IsVisible="False">
                     <Label Text="Projekty" FontSize="24" />
-                    <Entry Placeholder="Nazwa projektu" />
-                    <Editor Placeholder="Opis projektu" HeightRequest="100" />
-                    <Entry Placeholder="URL projektu (opcjonalnie)" />
-                    <Button Text="Dodaj projekt" />
+                    <Entry Placeholder="Nazwa projektu" Text="{Binding CurrentProject.Name}" />
+                    <Editor Placeholder="Opis projektu" Text="{Binding CurrentProject.Description}" HeightRequest="100" />
+                    <Entry Placeholder="URL projektu (opcjonalnie)" Text="{Binding CurrentProject.ProjectUrl}" />
+                    <Button Text="Dodaj projekt" Command="{Binding AddProjectCommand}" />
+                    
                     <Label Text="Lista projektów:" FontSize="18" Margin="0,20,0,10" />
-                    <CollectionView x:Name="ProjectsList" HeightRequest="200" />
+                    <CollectionView ItemsSource="{Binding Projects}" HeightRequest="200">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Project">
+                                <Border Padding="10" Margin="0,5">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="{Binding Name}" VerticalOptions="Center" />
+                                        <Button Grid.Column="1" Text="Usuń" 
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteProjectCommand}"
+                                                CommandParameter="{Binding .}" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+
+                <!-- Certyfikaty -->
+                <VerticalStackLayout x:Name="CertificatesContent" Spacing="10" IsVisible="False">
+                    <Label Text="Certyfikaty" FontSize="24" />
+                    <Entry Placeholder="Nazwa certyfikatu" Text="{Binding CurrentCertificate.Name}" />
+                    <Entry Placeholder="Organizacja wydająca" Text="{Binding CurrentCertificate.IssuingOrganization}" />
+                    <Label Text="Data wydania" />
+                    <DatePicker Date="{Binding CurrentCertificate.IssueDate}" />
+                    <Label Text="Data wygaśnięcia (opcjonalnie)" />
+                    <DatePicker Date="{Binding CertificateExpirationDate}" />
+                    <Entry Placeholder="ID poświadczenia" Text="{Binding CurrentCertificate.CredentialId}" />
+                    <Entry Placeholder="URL poświadczenia" Text="{Binding CurrentCertificate.CredentialUrl}" />
+                    <Button Text="Dodaj certyfikat" Command="{Binding AddCertificateCommand}" />
+                    
+                    <Label Text="Lista certyfikatów:" FontSize="18" Margin="0,20,0,10" />
+                    <CollectionView ItemsSource="{Binding Certificates}" HeightRequest="200">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Certificate">
+                                <Border Padding="10" Margin="0,5">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="{Binding Name}" VerticalOptions="Center" />
+                                        <Button Grid.Column="1" Text="Usuń" 
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteCertificateCommand}"
+                                                CommandParameter="{Binding .}" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
                 </VerticalStackLayout>
 
             </VerticalStackLayout>

@@ -52,8 +52,9 @@ namespace CVEnhancer
                 if (e.CurrentSelection.Count == 0) return;
                 
                 int userId = (e.CurrentSelection.First() as UserViewModel).UserId;
-                await SetActiveProfile(userId);
-                
+                var user = await _localDbService.GetUserById(userId);
+                _sessionService.Login(user);
+
                 await DisplayAlert("Zalogowano poprawnie", (e.CurrentSelection.First() as UserViewModel)?.FullName, "OK");
                 
                 // Po zalogowaniu przekieruj do Dashboard
@@ -66,10 +67,36 @@ namespace CVEnhancer
             }
         }
 
-        private async Task SetActiveProfile(int userId) 
+        private async void AddNewProfileButton(object sender, EventArgs e)
         {
-            var user = await _localDbService.GetUserById(userId);
-            _sessionService.Login(user);
+            int userCount = await _localDbService.CountUsers();
+            if (userCount >= 5)
+            {
+                await DisplayAlert("Błąd", "Osiągnięto maksymalną liczbę profili", "OK");
+                return;
+            }
+            else
+            {
+                try
+                {
+                    var firstName = await DisplayPromptAsync("Podaj imię", "Podaj imię", "OK");
+                    var lastName = await DisplayPromptAsync("Podaj nazwisko", "Podaj nazwisko", "OK");
+                    var x = new User() { FirstName = firstName, LastName = lastName, ProfilePicture = new ProfilePicture() { Picture = ImageByteConverter.defaultImage }, };
+                    await _localDbService.AddUser(x);
+                    _sessionService.Login(x);
+
+                    var y = new UserViewModel { User = x };
+                    await DisplayAlert("Zalogowano poprawnie", y.FullName, "OK");
+                    await DisplayAlert("Uzupełnij resztę swoich danych", y.FullName, "OK");
+
+                    await Shell.Current.GoToAsync("//DataPage");
+                }
+                catch (Exception ex)
+                {
+                    await DisplayAlert("Błąd", ex.Message, "OK");
+                    return;
+                }
+            }
         }
     }
 }

@@ -73,6 +73,7 @@
                                      WidthRequest="252">
 
                     <Button Text="Dodaj nowy profil"
+                            Clicked="AddNewProfileButton"
                             BackgroundColor="{StaticResource Secondary}"
                             TextColor="{StaticResource Primary}"
                             FontAttributes="Bold"

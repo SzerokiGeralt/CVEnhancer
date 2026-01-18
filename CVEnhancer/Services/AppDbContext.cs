@@ -92,5 +92,38 @@ namespace CVEnhancer.Data
                 });
             }
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Konfiguracja relacji User -> ProfilePicture z cascade delete
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.ProfilePicture)
+                .WithOne(p => p.User)
+                .HasForeignKey<ProfilePicture>(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Konfiguracja cascade delete dla pozostałych relacji
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.WorkExperiences)
+                .WithOne(w => w.User)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Educations)
+                .WithOne(e => e.User)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Projects)
+                .WithOne(p => p.User)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Certificates)
+                .WithOne(c => c.User)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
     }
 }

@@ -19,6 +19,7 @@ namespace CVEnhancer.Services
             Db.Database.EnsureCreated();
         }
 
+        // ===== USER =====
         public async Task<List<User>> GetUsersWithPictures()
         {
             // Dołącz ProfilePicture do zapytania
@@ -28,8 +29,94 @@ namespace CVEnhancer.Services
             return users;
         }
 
-        public async Task<User> GetUserById(int Id) {
-            return await Db.Users.Where(x => x.UserId == Id).FirstAsync();
+        public async Task<User> GetUserById(int id)
+        {
+            return await Db.Users.Where(x => x.UserId == id).FirstAsync();
+        }
+
+        public async Task<User?> GetUserWithAllData(int userId)
+        {
+            return await Db.Users
+                .Include(u => u.WorkExperiences)
+                .Include(u => u.Educations)
+                .Include(u => u.Projects)
+                .Include(u => u.Certificates)
+                .FirstOrDefaultAsync(u => u.UserId == userId);
+        }
+
+        public async Task UpdateUser(User user)
+        {
+            Db.Users.Update(user);
+            await Db.SaveChangesAsync();
+        }
+
+        public async Task AddUser(User user)
+        {
+            Db.Users.Add(user);
+            await Db.SaveChangesAsync();
+        }
+
+        public async Task DeleteUser(User user)
+        {
+            Db.Users.Remove(user);
+            await Db.SaveChangesAsync();
+        }
+
+        // ===== WORK EXPERIENCE =====
+        public async Task AddWorkExperience(WorkExperience item)
+        {
+            Db.WorkExperiences.Add(item);
+            await Db.SaveChangesAsync();
+        }
+
+        public async Task DeleteWorkExperience(WorkExperience item)
+        {
+            Db.WorkExperiences.Remove(item);
+            await Db.SaveChangesAsync();
+        }
+
+        // ===== EDUCATION =====
+        public async Task AddEducation(Education item)
+        {
+            Db.Educations.Add(item);
+            await Db.SaveChangesAsync();
+        }
+
+        public async Task DeleteEducation(Education item)
+        {
+            Db.Educations.Remove(item);
+            await Db.SaveChangesAsync();
+        }
+
+        // ===== PROJECTS =====
+        public async Task AddProject(Project item)
+        {
+            Db.Projects.Add(item);
+            await Db.SaveChangesAsync();
+        }
+
+        public async Task DeleteProject(Project item)
+        {
+            Db.Projects.Remove(item);
+            await Db.SaveChangesAsync();
+        }
+
+        // ===== CERTIFICATES =====
+        public async Task AddCertificate(Certificate item)
+        {
+            Db.Certificates.Add(item);
+            await Db.SaveChangesAsync();
+        }
+
+        public async Task DeleteCertificate(Certificate item)
+        {
+            Db.Certificates.Remove(item);
+            await Db.SaveChangesAsync();
+        }
+
+        public async Task<int> CountUsers()
+        {
+            return await Db.Users.CountAsync();
         }
     }
 }
