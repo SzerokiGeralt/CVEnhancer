@@ -29,6 +29,9 @@ namespace CVEnhancer
             builder.Services.AddTransient<DataPage>();
             builder.Services.AddTransient<LibraryPage>();
             builder.Services.AddTransient<GeneratePage>();
+            builder.Services.AddSingleton<SessionService>();
+            builder.Services.AddSingleton<ProfileService>();
+            
 
 #if DEBUG
             builder.Logging.AddDebug();

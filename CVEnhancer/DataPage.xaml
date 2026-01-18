@@ -20,17 +20,18 @@
                 <!-- Dane Osobowe -->
                 <VerticalStackLayout x:Name="PersonalDataContent" Spacing="10">
                     <Label Text="Dane Osobowe" FontSize="24" />
-                    <Entry Placeholder="Imię" />
-                    <Entry Placeholder="Nazwisko" />
-                    <Entry Placeholder="Email" Keyboard="Email" />
-                    <Entry Placeholder="Telefon" Keyboard="Telephone" />
-                    <Entry Placeholder="LinkedIn URL" />
-                    <Entry Placeholder="GitHub URL" />
-                    <Entry Placeholder="Portfolio URL" />
-                    <Entry Placeholder="Stanowisko" />
-                    <Editor Placeholder="Podsumowanie profesjonalne" HeightRequest="100" />
-                    <Button Text="Zapisz" />
+                    <Entry x:Name="FirstNameEntry" Placeholder="Imię" />
+                    <Entry x:Name="LastNameEntry" Placeholder="Nazwisko" />
+                    <Entry x:Name="EmailEntry" Placeholder="Email" Keyboard="Email" />
+                    <Entry x:Name="PhoneEntry" Placeholder="Telefon" Keyboard="Telephone" />
+                    <Entry x:Name="LinkedInEntry" Placeholder="LinkedIn URL" />
+                    <Entry x:Name="GitHubEntry" Placeholder="GitHub URL" />
+                    <Entry x:Name="PortfolioEntry" Placeholder="Portfolio URL" />
+                    <Entry x:Name="JobTitleEntry" Placeholder="Stanowisko" />
+                    <Editor x:Name="SummaryEditor" Placeholder="Podsumowanie profesjonalne" HeightRequest="100" />
+                    <Button Text="Zapisz" Clicked="OnSavePersonalDataClicked" />
                 </VerticalStackLayout>
+
 
                 <!-- Praca -->
                 <VerticalStackLayout x:Name="WorkContent" Spacing="10" IsVisible="False">

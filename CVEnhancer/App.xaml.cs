@@ -1,4 +1,5 @@
-﻿namespace CVEnhancer
+﻿
+namespace CVEnhancer
 {
     public partial class App : Application
     {

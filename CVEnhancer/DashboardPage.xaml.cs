@@ -12,6 +12,7 @@ public partial class DashboardPage : ContentPage
         _sessionService = sessionService;
 		FirstName = _sessionService.ActiveUser.FirstName;
         BindingContext = this;
+
     }
 
 	private async void OnGoToLibraryClicked(object sender, EventArgs e)
