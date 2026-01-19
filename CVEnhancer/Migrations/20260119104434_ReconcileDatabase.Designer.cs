@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CVEnhancer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260118130739_ImageForeignKey2")]
-    partial class ImageForeignKey2
+    [Migration("20260119104434_ReconcileDatabase")]
+    partial class ReconcileDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -172,7 +172,11 @@ namespace CVEnhancer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("CategorySkillCategoryId")
+                    b.PrimitiveCollection<string>("Aliases")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("CategoryId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
@@ -181,34 +185,14 @@ namespace CVEnhancer.Migrations
 
                     b.HasKey("SkillId");
 
-                    b.HasIndex("CategorySkillCategoryId");
+                    b.HasIndex("CategoryId");
 
                     b.ToTable("Skills");
                 });
 
-            modelBuilder.Entity("CVEnhancer.Models.SkillAlias", b =>
-                {
-                    b.Property<int>("SkillAliasId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Alias")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("SkillId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("SkillAliasId");
-
-                    b.HasIndex("SkillId");
-
-                    b.ToTable("SkillAliases");
-                });
-
             modelBuilder.Entity("CVEnhancer.Models.SkillCategory", b =>
                 {
-                    b.Property<int>("SkillCategoryId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -216,7 +200,7 @@ namespace CVEnhancer.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("SkillCategoryId");
+                    b.HasKey("Id");
 
                     b.ToTable("SkillCategories");
                 });
@@ -414,22 +398,11 @@ namespace CVEnhancer.Migrations
                 {
                     b.HasOne("CVEnhancer.Models.SkillCategory", "Category")
                         .WithMany("Skills")
-                        .HasForeignKey("CategorySkillCategoryId")
+                        .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("CVEnhancer.Models.SkillAlias", b =>
-                {
-                    b.HasOne("CVEnhancer.Models.Skill", "Skill")
-                        .WithMany("Aliases")
-                        .HasForeignKey("SkillId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Skill");
                 });
 
             modelBuilder.Entity("CVEnhancer.Models.WorkExperience", b =>
@@ -501,11 +474,6 @@ namespace CVEnhancer.Migrations
                         .HasForeignKey("WorkExperiencesWorkExperienceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("CVEnhancer.Models.Skill", b =>
-                {
-                    b.Navigation("Aliases");
                 });
 
             modelBuilder.Entity("CVEnhancer.Models.SkillCategory", b =>

@@ -2,7 +2,7 @@
 {
     public class SkillCategory
     {
-        public int SkillCategoryId { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public List<Skill> Skills { get; set; } = new ();
     }

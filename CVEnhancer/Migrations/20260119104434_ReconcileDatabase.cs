@@ -6,35 +6,22 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CVEnhancer.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class ReconcileDatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "ProfilePictures",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Picture = table.Column<byte[]>(type: "BLOB", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProfilePictures", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "SkillCategories",
                 columns: table => new
                 {
-                    SkillCategoryId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SkillCategories", x => x.SkillCategoryId);
+                    table.PrimaryKey("PK_SkillCategories", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -45,7 +32,6 @@ namespace CVEnhancer.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     FirstName = table.Column<string>(type: "TEXT", nullable: false),
                     LastName = table.Column<string>(type: "TEXT", nullable: false),
-                    ProfilePictureId = table.Column<int>(type: "INTEGER", nullable: true),
                     Email = table.Column<string>(type: "TEXT", nullable: true),
                     PhoneNumber = table.Column<string>(type: "TEXT", nullable: true),
                     LinkedInUrl = table.Column<string>(type: "TEXT", nullable: true),
@@ -57,11 +43,6 @@ namespace CVEnhancer.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.UserId);
-                    table.ForeignKey(
-                        name: "FK_Users_ProfilePictures_ProfilePictureId",
-                        column: x => x.ProfilePictureId,
-                        principalTable: "ProfilePictures",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -71,16 +52,17 @@ namespace CVEnhancer.Migrations
                     SkillId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
-                    CategorySkillCategoryId = table.Column<int>(type: "INTEGER", nullable: false)
+                    CategoryId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Aliases = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Skills", x => x.SkillId);
                     table.ForeignKey(
-                        name: "FK_Skills_SkillCategories_CategorySkillCategoryId",
-                        column: x => x.CategorySkillCategoryId,
+                        name: "FK_Skills_SkillCategories_CategoryId",
+                        column: x => x.CategoryId,
                         principalTable: "SkillCategories",
-                        principalColumn: "SkillCategoryId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -156,6 +138,26 @@ namespace CVEnhancer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ProfilePictures",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Picture = table.Column<byte[]>(type: "BLOB", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProfilePictures", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProfilePictures_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Projects",
                 columns: table => new
                 {
@@ -198,26 +200,6 @@ namespace CVEnhancer.Migrations
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "SkillAliases",
-                columns: table => new
-                {
-                    SkillAliasId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Alias = table.Column<string>(type: "TEXT", nullable: false),
-                    SkillId = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SkillAliases", x => x.SkillAliasId);
-                    table.ForeignKey(
-                        name: "FK_SkillAliases_Skills_SkillId",
-                        column: x => x.SkillId,
-                        principalTable: "Skills",
-                        principalColumn: "SkillId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -343,6 +325,12 @@ namespace CVEnhancer.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProfilePictures_UserId",
+                table: "ProfilePictures",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Projects_UserId",
                 table: "Projects",
                 column: "UserId");
@@ -353,24 +341,14 @@ namespace CVEnhancer.Migrations
                 column: "SkillsSkillId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SkillAliases_SkillId",
-                table: "SkillAliases",
-                column: "SkillId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Skills_CategorySkillCategoryId",
+                name: "IX_Skills_CategoryId",
                 table: "Skills",
-                column: "CategorySkillCategoryId");
+                column: "CategoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SkillWorkExperience_WorkExperiencesWorkExperienceId",
                 table: "SkillWorkExperience",
                 column: "WorkExperiencesWorkExperienceId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_ProfilePictureId",
-                table: "Users",
-                column: "ProfilePictureId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_WorkExperiences_UserId",
@@ -391,10 +369,10 @@ namespace CVEnhancer.Migrations
                 name: "GeneratedCVs");
 
             migrationBuilder.DropTable(
-                name: "ProjectSkill");
+                name: "ProfilePictures");
 
             migrationBuilder.DropTable(
-                name: "SkillAliases");
+                name: "ProjectSkill");
 
             migrationBuilder.DropTable(
                 name: "SkillWorkExperience");
@@ -419,9 +397,6 @@ namespace CVEnhancer.Migrations
 
             migrationBuilder.DropTable(
                 name: "Users");
-
-            migrationBuilder.DropTable(
-                name: "ProfilePictures");
         }
     }
 }

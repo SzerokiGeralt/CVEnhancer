@@ -13,7 +13,6 @@ namespace CVEnhancer.Data
         public DbSet<WorkExperience> WorkExperiences { get; set; }
         public DbSet<Education> Educations { get; set; }
         public DbSet<Skill> Skills { get; set; }
-        public DbSet<SkillAlias> SkillAliases { get; set; }
         public DbSet<SkillCategory> SkillCategories { get; set; }
         public DbSet<GeneratedCV> GeneratedCVs { get; set; }
         public DbSet<ProfilePicture> ProfilePictures { get; set; }

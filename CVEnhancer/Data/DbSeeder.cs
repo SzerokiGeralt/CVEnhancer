@@ -61,73 +61,73 @@ namespace CVEnhancer.Data
             var skillDict = new Dictionary<string, Skill>();
 
             // Programming Languages
-            skillDict["csharp"] = new Skill { Name = "C#", Category = programmingCat };
-            skillDict["javascript"] = new Skill { Name = "JavaScript", Category = programmingCat };
-            skillDict["typescript"] = new Skill { Name = "TypeScript", Category = programmingCat };
-            skillDict["python"] = new Skill { Name = "Python", Category = programmingCat };
-            skillDict["java"] = new Skill { Name = "Java", Category = programmingCat };
+            skillDict["csharp"] = new Skill { Name = "C#", Category = programmingCat, Aliases = new List<string> { "CSharp", "C Sharp", "cs", "csharp", ".NET C#" } };
+            skillDict["javascript"] = new Skill { Name = "JavaScript", Category = programmingCat, Aliases = new List<string> { "JS", "ECMAScript", "ES6", "ES2015", "ES2020", "Node.js", "NodeJS" } };
+            skillDict["typescript"] = new Skill { Name = "TypeScript", Category = programmingCat, Aliases = new List<string> { "TS", "TypeScript", "ts" } };
+            skillDict["python"] = new Skill { Name = "Python", Category = programmingCat, Aliases = new List<string> { "Python3", "py", "Python 3.x", "CPython" } };
+            skillDict["java"] = new Skill { Name = "Java", Category = programmingCat, Aliases = new List<string> { "Java SE", "Java EE", "JDK", "JRE", "OpenJDK" } };
 
             // Frameworks
-            skillDict["dotnet"] = new Skill { Name = ".NET", Category = frameworksCat };
-            skillDict["dotnetCore"] = new Skill { Name = ".NET Core", Category = frameworksCat };
-            skillDict["aspnet"] = new Skill { Name = "ASP.NET Core", Category = frameworksCat };
-            skillDict["aspnetMvc"] = new Skill { Name = "ASP.NET MVC", Category = frameworksCat };
-            skillDict["maui"] = new Skill { Name = ".NET MAUI", Category = frameworksCat };
-            skillDict["react"] = new Skill { Name = "React", Category = frameworksCat };
-            skillDict["angular"] = new Skill { Name = "Angular", Category = frameworksCat };
-            skillDict["blazor"] = new Skill { Name = "Blazor", Category = frameworksCat };
-            skillDict["entityFramework"] = new Skill { Name = "Entity Framework", Category = frameworksCat };
-            skillDict["spring"] = new Skill { Name = "Spring", Category = frameworksCat };
-            skillDict["microservices"] = new Skill { Name = "Microservices", Category = frameworksCat };
-            skillDict["restApi"] = new Skill { Name = "REST API", Category = frameworksCat };
-            skillDict["webService"] = new Skill { Name = "WebService", Category = frameworksCat };
-            skillDict["winForms"] = new Skill { Name = "WinForms", Category = frameworksCat };
+            skillDict["dotnet"] = new Skill { Name = ".NET", Category = frameworksCat, Aliases = new List<string> { "dotnet", ".NET Framework", "Microsoft .NET", "dot net" } };
+            skillDict["dotnetCore"] = new Skill { Name = ".NET Core", Category = frameworksCat, Aliases = new List<string> { "dotnet core", ".NET 5", ".NET 6", ".NET 7", ".NET 8", ".NET 9" } };
+            skillDict["aspnet"] = new Skill { Name = "ASP.NET Core", Category = frameworksCat, Aliases = new List<string> { "ASP.NET", "ASP.NET Core", "aspnetcore", "asp.net", "Web API" } };
+            skillDict["aspnetMvc"] = new Skill { Name = "ASP.NET MVC", Category = frameworksCat, Aliases = new List<string> { "MVC", "Model View Controller", "ASP MVC", "ASP.NET MVC 5" } };
+            skillDict["maui"] = new Skill { Name = ".NET MAUI", Category = frameworksCat, Aliases = new List<string> { "MAUI", "Multi-platform App UI", "Xamarin.Forms successor", "dotnet maui" } };
+            skillDict["react"] = new Skill { Name = "React", Category = frameworksCat, Aliases = new List<string> { "ReactJS", "React.js", "React Native", "Hooks", "Redux" } };
+            skillDict["angular"] = new Skill { Name = "Angular", Category = frameworksCat, Aliases = new List<string> { "AngularJS", "Angular2+", "Angular 2", "ng", "TypeScript Angular" } };
+            skillDict["blazor"] = new Skill { Name = "Blazor", Category = frameworksCat, Aliases = new List<string> { "Blazor Server", "Blazor WebAssembly", "Blazor WASM", "Blazor Hybrid" } };
+            skillDict["entityFramework"] = new Skill { Name = "Entity Framework", Category = frameworksCat, Aliases = new List<string> { "EF", "EF Core", "Entity Framework Core", "ORM", "Code First", "Database First" } };
+            skillDict["spring"] = new Skill { Name = "Spring", Category = frameworksCat, Aliases = new List<string> { "Spring Boot", "Spring Framework", "Spring MVC", "Spring Data", "Spring Cloud" } };
+            skillDict["microservices"] = new Skill { Name = "Microservices", Category = frameworksCat, Aliases = new List<string> { "Microservice Architecture", "MSA", "Service-Oriented Architecture", "SOA" } };
+            skillDict["restApi"] = new Skill { Name = "REST API", Category = frameworksCat, Aliases = new List<string> { "RESTful", "REST", "API", "Web API", "HTTP API", "JSON API" } };
+            skillDict["webService"] = new Skill { Name = "WebService", Category = frameworksCat, Aliases = new List<string> { "Web Service", "SOAP", "WCF", "Windows Communication Foundation", "XML Web Services" } };
+            skillDict["winForms"] = new Skill { Name = "WinForms", Category = frameworksCat, Aliases = new List<string> { "Windows Forms", "WinForms .NET", "Desktop Application" } };
 
             // Databases
-            skillDict["sqlServer"] = new Skill { Name = "SQL Server", Category = databaseCat };
-            skillDict["sql"] = new Skill { Name = "SQL", Category = databaseCat };
-            skillDict["tsql"] = new Skill { Name = "T-SQL", Category = databaseCat };
-            skillDict["plsql"] = new Skill { Name = "PL/SQL", Category = databaseCat };
-            skillDict["postgresql"] = new Skill { Name = "PostgreSQL", Category = databaseCat };
-            skillDict["sqlite"] = new Skill { Name = "SQLite", Category = databaseCat };
-            skillDict["mongodb"] = new Skill { Name = "MongoDB", Category = databaseCat };
-            skillDict["redis"] = new Skill { Name = "Redis", Category = databaseCat };
-            skillDict["snowflake"] = new Skill { Name = "Snowflake", Category = databaseCat };
+            skillDict["sqlServer"] = new Skill { Name = "SQL Server", Category = databaseCat, Aliases = new List<string> { "Microsoft SQL Server", "MS SQL", "MSSQL", "SQL Server 2019", "SQL Server 2022", "Azure SQL" } };
+            skillDict["sql"] = new Skill { Name = "SQL", Category = databaseCat, Aliases = new List<string> { "Structured Query Language", "ANSI SQL", "SQL queries", "Database queries" } };
+            skillDict["tsql"] = new Skill { Name = "T-SQL", Category = databaseCat, Aliases = new List<string> { "Transact-SQL", "T-SQL", "SQL Server T-SQL", "Stored Procedures" } };
+            skillDict["plsql"] = new Skill { Name = "PL/SQL", Category = databaseCat, Aliases = new List<string> { "Oracle PL/SQL", "Procedural Language/SQL", "Oracle Database" } };
+            skillDict["postgresql"] = new Skill { Name = "PostgreSQL", Category = databaseCat, Aliases = new List<string> { "Postgres", "psql", "PostgreSQL 14", "PostgreSQL 15", "pgAdmin" } };
+            skillDict["sqlite"] = new Skill { Name = "SQLite", Category = databaseCat, Aliases = new List<string> { "SQLite3", "sqlite", "Embedded Database", "Local Database" } };
+            skillDict["mongodb"] = new Skill { Name = "MongoDB", Category = databaseCat, Aliases = new List<string> { "Mongo", "NoSQL", "Document Database", "MongoDB Atlas", "Mongoose" } };
+            skillDict["redis"] = new Skill { Name = "Redis", Category = databaseCat, Aliases = new List<string> { "Redis Cache", "In-Memory Database", "Key-Value Store", "Redis Stack" } };
+            skillDict["snowflake"] = new Skill { Name = "Snowflake", Category = databaseCat, Aliases = new List<string> { "Snowflake Cloud", "Data Warehouse", "Snowflake DB" } };
 
             // Cloud & DevOps
-            skillDict["azure"] = new Skill { Name = "Azure", Category = cloudCat };
-            skillDict["azureCloud"] = new Skill { Name = "Azure Cloud", Category = cloudCat };
-            skillDict["azureDevOps"] = new Skill { Name = "Azure DevOps", Category = cloudCat };
-            skillDict["aws"] = new Skill { Name = "AWS", Category = cloudCat };
-            skillDict["docker"] = new Skill { Name = "Docker", Category = cloudCat };
-            skillDict["kubernetes"] = new Skill { Name = "Kubernetes", Category = cloudCat };
-            skillDict["openshift"] = new Skill { Name = "OpenShift", Category = cloudCat };
-            skillDict["cicd"] = new Skill { Name = "CI/CD", Category = cloudCat };
-            skillDict["kafka"] = new Skill { Name = "Kafka", Category = cloudCat };
-            skillDict["rabbitmq"] = new Skill { Name = "RabbitMQ", Category = cloudCat };
+            skillDict["azure"] = new Skill { Name = "Azure", Category = cloudCat, Aliases = new List<string> { "Microsoft Azure", "Azure Platform", "Azure Services" } };
+            skillDict["azureCloud"] = new Skill { Name = "Azure Cloud", Category = cloudCat, Aliases = new List<string> { "Azure Cloud Services", "Azure Infrastructure", "Azure PaaS", "Azure IaaS" } };
+            skillDict["azureDevOps"] = new Skill { Name = "Azure DevOps", Category = cloudCat, Aliases = new List<string> { "Azure Pipelines", "Azure Repos", "Azure Boards", "VSTS", "TFS", "Team Foundation Server" } };
+            skillDict["aws"] = new Skill { Name = "AWS", Category = cloudCat, Aliases = new List<string> { "Amazon Web Services", "AWS Cloud", "EC2", "S3", "Lambda", "AWS Services" } };
+            skillDict["docker"] = new Skill { Name = "Docker", Category = cloudCat, Aliases = new List<string> { "Docker Containers", "Docker Compose", "Dockerfile", "Docker Hub", "Containerization" } };
+            skillDict["kubernetes"] = new Skill { Name = "Kubernetes", Category = cloudCat, Aliases = new List<string> { "K8s", "k8s", "Container Orchestration", "Kubernetes Cluster", "kubectl" } };
+            skillDict["openshift"] = new Skill { Name = "OpenShift", Category = cloudCat, Aliases = new List<string> { "Red Hat OpenShift", "OKD", "OpenShift Container Platform" } };
+            skillDict["cicd"] = new Skill { Name = "CI/CD", Category = cloudCat, Aliases = new List<string> { "Continuous Integration", "Continuous Deployment", "Continuous Delivery", "DevOps Pipeline", "Build Pipeline" } };
+            skillDict["kafka"] = new Skill { Name = "Kafka", Category = cloudCat, Aliases = new List<string> { "Apache Kafka", "Kafka Streams", "Confluent", "Message Broker", "Event Streaming" } };
+            skillDict["rabbitmq"] = new Skill { Name = "RabbitMQ", Category = cloudCat, Aliases = new List<string> { "Rabbit MQ", "AMQP", "Message Queue", "RabbitMQ Server" } };
 
             // Tools
-            skillDict["git"] = new Skill { Name = "Git", Category = toolsCat };
-            skillDict["visualStudio"] = new Skill { Name = "Visual Studio", Category = toolsCat };
-            skillDict["vscode"] = new Skill { Name = "VS Code", Category = toolsCat };
-            skillDict["postman"] = new Skill { Name = "Postman", Category = toolsCat };
-            skillDict["jira"] = new Skill { Name = "Jira", Category = toolsCat };
-            skillDict["githubCopilot"] = new Skill { Name = "GitHub Copilot", Category = toolsCat };
+            skillDict["git"] = new Skill { Name = "Git", Category = toolsCat, Aliases = new List<string> { "Version Control", "Git SCM", "GitHub", "GitLab", "Bitbucket", "Source Control" } };
+            skillDict["visualStudio"] = new Skill { Name = "Visual Studio", Category = toolsCat, Aliases = new List<string> { "VS", "Visual Studio IDE", "VS 2022", "VS 2019", "Microsoft Visual Studio" } };
+            skillDict["vscode"] = new Skill { Name = "VS Code", Category = toolsCat, Aliases = new List<string> { "Visual Studio Code", "VSCode", "Code Editor", "VS Code Insiders" } };
+            skillDict["postman"] = new Skill { Name = "Postman", Category = toolsCat, Aliases = new List<string> { "Postman API", "API Testing", "Postman Collections" } };
+            skillDict["jira"] = new Skill { Name = "Jira", Category = toolsCat, Aliases = new List<string> { "Atlassian Jira", "Jira Software", "Jira Cloud", "Issue Tracking", "Project Management" } };
+            skillDict["githubCopilot"] = new Skill { Name = "GitHub Copilot", Category = toolsCat, Aliases = new List<string> { "Copilot", "AI Pair Programming", "GitHub AI", "Copilot X" } };
 
             // Frontend
-            skillDict["html"] = new Skill { Name = "HTML", Category = frontendCat };
-            skillDict["css"] = new Skill { Name = "CSS", Category = frontendCat };
-            skillDict["scss"] = new Skill { Name = "SCSS", Category = frontendCat };
+            skillDict["html"] = new Skill { Name = "HTML", Category = frontendCat, Aliases = new List<string> { "HTML5", "Hypertext Markup Language", "Web Markup", "Semantic HTML" } };
+            skillDict["css"] = new Skill { Name = "CSS", Category = frontendCat, Aliases = new List<string> { "CSS3", "Cascading Style Sheets", "Stylesheets", "Responsive CSS" } };
+            skillDict["scss"] = new Skill { Name = "SCSS", Category = frontendCat, Aliases = new List<string> { "Sass", "SASS", "Syntactically Awesome Style Sheets", "CSS Preprocessor" } };
 
             // Operating Systems
-            skillDict["linux"] = new Skill { Name = "Linux", Category = osCat };
-            skillDict["windows"] = new Skill { Name = "Windows", Category = osCat };
+            skillDict["linux"] = new Skill { Name = "Linux", Category = osCat, Aliases = new List<string> { "Ubuntu", "Debian", "CentOS", "Red Hat", "RHEL", "Unix", "Bash", "Shell Scripting" } };
+            skillDict["windows"] = new Skill { Name = "Windows", Category = osCat, Aliases = new List<string> { "Microsoft Windows", "Windows Server", "Windows 10", "Windows 11", "PowerShell" } };
 
             // Soft Skills
-            skillDict["agile"] = new Skill { Name = "Agile", Category = softSkillsCat };
-            skillDict["scrum"] = new Skill { Name = "Scrum", Category = softSkillsCat };
-            skillDict["teamwork"] = new Skill { Name = "Praca zespo³owa", Category = softSkillsCat };
-            skillDict["communication"] = new Skill { Name = "Komunikacja", Category = softSkillsCat };
+            skillDict["agile"] = new Skill { Name = "Agile", Category = softSkillsCat, Aliases = new List<string> { "Agile Methodology", "Agile Development", "Agile Framework", "Lean" } };
+            skillDict["scrum"] = new Skill { Name = "Scrum", Category = softSkillsCat, Aliases = new List<string> { "Scrum Framework", "Scrum Master", "Sprint Planning", "Daily Standup", "Retrospective" } };
+            skillDict["teamwork"] = new Skill { Name = "Praca zespo³owa", Category = softSkillsCat, Aliases = new List<string> { "Teamwork", "Collaboration", "Team Collaboration", "Team Player", "Wspó³praca" } };
+            skillDict["communication"] = new Skill { Name = "Komunikacja", Category = softSkillsCat, Aliases = new List<string> { "Communication", "Interpersonal Skills", "Verbal Communication", "Written Communication", "Komunikacja interpersonalna" } };
 
             context.Set<Skill>().AddRange(skillDict.Values);
             context.SaveChanges();
