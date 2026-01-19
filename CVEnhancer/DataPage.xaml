@@ -55,6 +55,8 @@
                     <Label Text="Doświadczenie Zawodowe" FontSize="24" />
                     <Entry Placeholder="Nazwa firmy" Text="{Binding CurrentWork.CompanyName}" />
                     <Entry Placeholder="Stanowisko" Text="{Binding CurrentWork.JobTitle}" />
+                    <!-- TODO: BINDOWANIE -->
+                    <Editor Placeholder="Tagi technologii i umiejętności" Text="" HeightRequest="100" />
                     <Label Text="Data rozpoczęcia" />
                     <DatePicker Date="{Binding CurrentWork.StartDate}" />
                     <Label Text="Data zakończenia (opcjonalnie)" />
@@ -63,13 +65,14 @@
                     <Button Text="Dodaj wpis" Command="{Binding AddWorkCommand}" />
                     
                     <Label Text="Lista doświadczeń:" FontSize="18" Margin="0,20,0,10" />
-                    <CollectionView ItemsSource="{Binding WorkExperiences}" HeightRequest="200">
+                    <CollectionView ItemsSource="{Binding WorkExperiences}">
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="models:WorkExperience">
                                 <Border Padding="10" Margin="0,5">
-                                    <Grid ColumnDefinitions="*,Auto">
-                                        <Label Text="{Binding JobTitle}" VerticalOptions="Center" />
-                                        <Button Grid.Column="1" Text="Usuń" 
+                                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="*,*">
+                                        <Label Grid.Column="0" Grid.Row="0" Text="{Binding JobTitle}" VerticalOptions="Center" />
+                                        <Label Grid.Column="0" Grid.Row="1" Text="{Binding Description}" VerticalOptions="Center" />
+                                        <Button Grid.Column="1" Grid.RowSpan="1" Text="Usuń" 
                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteWorkCommand}"
                                                 CommandParameter="{Binding .}" />
                                     </Grid>
@@ -85,6 +88,8 @@
                     <Entry Placeholder="Nazwa uczelni" Text="{Binding CurrentEducation.InstitutionName}" />
                     <Entry Placeholder="Kierunek studiów" Text="{Binding CurrentEducation.FieldOfStudy}" />
                     <Entry Placeholder="Stopień" Text="{Binding CurrentEducation.Degree}" />
+                    <!-- TODO: BINDOWANIE -->
+                    <Editor Placeholder="Tagi technologii i umiejętności" Text="" HeightRequest="100" />
                     <Label Text="Data rozpoczęcia" />
                     <DatePicker Date="{Binding CurrentEducation.StartDate}" />
                     <Label Text="Data zakończenia (opcjonalnie)" />
@@ -92,13 +97,14 @@
                     <Button Text="Dodaj wpis" Command="{Binding AddEducationCommand}" />
                     
                     <Label Text="Lista edukacji:" FontSize="18" Margin="0,20,0,10" />
-                    <CollectionView ItemsSource="{Binding Educations}" HeightRequest="200">
+                    <CollectionView ItemsSource="{Binding Educations}">
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="models:Education">
                                 <Border Padding="10" Margin="0,5">
-                                    <Grid ColumnDefinitions="*,Auto">
-                                        <Label Text="{Binding InstitutionName}" VerticalOptions="Center" />
-                                        <Button Grid.Column="1" Text="Usuń" 
+                                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="*,*">
+                                        <Label Grid.Column="0" Grid.Row="0" Text="{Binding InstitutionName}" VerticalOptions="Center" />
+                                        <Label Grid.Column="0" Grid.Row="1" Text="{Binding FieldOfStudy}" VerticalOptions="Center" />
+                                        <Button Grid.Column="1" Grid.RowSpan="1" Text="Usuń" 
                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteEducationCommand}"
                                                 CommandParameter="{Binding .}" />
                                     </Grid>
@@ -113,11 +119,13 @@
                     <Label Text="Projekty" FontSize="24" />
                     <Entry Placeholder="Nazwa projektu" Text="{Binding CurrentProject.Name}" />
                     <Editor Placeholder="Opis projektu" Text="{Binding CurrentProject.Description}" HeightRequest="100" />
+                    <!-- TODO: BINDOWANIE -->
+                    <Editor Placeholder="Tagi technologii i umiejętności" Text="" HeightRequest="100" />
                     <Entry Placeholder="URL projektu (opcjonalnie)" Text="{Binding CurrentProject.ProjectUrl}" />
                     <Button Text="Dodaj projekt" Command="{Binding AddProjectCommand}" />
                     
                     <Label Text="Lista projektów:" FontSize="18" Margin="0,20,0,10" />
-                    <CollectionView ItemsSource="{Binding Projects}" HeightRequest="200">
+                    <CollectionView ItemsSource="{Binding Projects}">
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="models:Project">
                                 <Border Padding="10" Margin="0,5">
@@ -138,6 +146,8 @@
                     <Label Text="Certyfikaty" FontSize="24" />
                     <Entry Placeholder="Nazwa certyfikatu" Text="{Binding CurrentCertificate.Name}" />
                     <Entry Placeholder="Organizacja wydająca" Text="{Binding CurrentCertificate.IssuingOrganization}" />
+                    <!-- TODO: BINDOWANIE -->
+                    <Editor Placeholder="Tagi technologii i umiejętności" Text="" HeightRequest="100" />
                     <Label Text="Data wydania" />
                     <DatePicker Date="{Binding CurrentCertificate.IssueDate}" />
                     <Label Text="Data wygaśnięcia (opcjonalnie)" />
@@ -147,7 +157,7 @@
                     <Button Text="Dodaj certyfikat" Command="{Binding AddCertificateCommand}" />
                     
                     <Label Text="Lista certyfikatów:" FontSize="18" Margin="0,20,0,10" />
-                    <CollectionView ItemsSource="{Binding Certificates}" HeightRequest="200">
+                    <CollectionView ItemsSource="{Binding Certificates}">
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="models:Certificate">
                                 <Border Padding="10" Margin="0,5">
