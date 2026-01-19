@@ -32,13 +32,7 @@ namespace CVEnhancer.Services
             if (user == null)
                 throw new InvalidOperationException("Nie znaleziono użytkownika w bazie.");
 
-            // (opcjonalnie) keywords do debug/UX
-            var keywords = _extraction.ExtractKeywords(jobText);
-
-            var result = _matching.Match(user, jobText, topN: 3);
-
-            // możesz tu wpiąć keywords do result.JobKeywords jeśli chcesz,
-            // ale my już bierzemy TopTerms z TF-IDF, więc zostawiamy jak jest.
+            var result = await _matching.MatchAsync(user, jobText, topN: 10);
 
             return result;
         }

@@ -91,7 +91,7 @@ namespace CVEnhancer.ViewModels
         public ICommand DeleteProjectCommand { get; }
         public ICommand DeleteCertificateCommand { get; }
         public ICommand DeleteProfileCommand { get; }
-        public ICommand ChangeProfilePictureCommand {  get; }
+        public ICommand ChangeProfilePictureCommand { get; }
 
         public DataPageViewModel(LocalDbService db, SessionService session)
         {

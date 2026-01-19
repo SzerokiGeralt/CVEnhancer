@@ -42,7 +42,9 @@ namespace CVEnhancer.Services
                 .Include(u => u.Projects)
                     .ThenInclude(p => p.Skills)
                 .Include(u => u.Educations)
+                    .ThenInclude(p => p.Skills)
                 .Include(u => u.Certificates)
+                    .ThenInclude(p => p.Skills)
                 .FirstOrDefaultAsync(u => u.UserId == userId);
         }
 
@@ -62,6 +64,45 @@ namespace CVEnhancer.Services
         {
             Db.Users.Remove(user);
             await Db.SaveChangesAsync();
+        }
+
+        // ===== SKILLS =====
+        /// <summary>
+        /// Pobiera wszystkie skille z bazy wraz z ich aliasami.
+        /// </summary>
+        public async Task<List<Skill>> GetAllSkillsAsync()
+        {
+            return await Db.Skills.ToListAsync();
+        }
+
+        /// <summary>
+        /// Pobiera słownik mapujący aliasy na kanoniczne nazwy skilli.
+        /// Klucz: alias (lowercase), Wartość: kanoniczna nazwa skilla.
+        /// </summary>
+        public async Task<Dictionary<string, string>> GetSkillAliasMapAsync()
+        {
+            var skills = await Db.Skills.ToListAsync();
+            var map = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var skill in skills)
+            {
+                // Dodaj samą nazwę skilla (mapuje na siebie)
+                map.TryAdd(skill.Name, skill.Name);
+
+                // Dodaj wszystkie aliasy mapujące na kanoniczną nazwę
+                if (skill.Aliases != null)
+                {
+                    foreach (var alias in skill.Aliases)
+                    {
+                        if (!string.IsNullOrWhiteSpace(alias))
+                        {
+                            map.TryAdd(alias, skill.Name);
+                        }
+                    }
+                }
+            }
+
+            return map;
         }
 
         // ===== WORK EXPERIENCE =====

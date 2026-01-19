@@ -3,25 +3,48 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="CVEnhancer.GeneratePage"
              Title="Generuj">
-    <ScrollView Padding="20">
-        <VerticalStackLayout Spacing="20">
-            <Label Text="Wygeneruj nowe CV" FontSize="24" />
-            
-            <Editor x:Name="JobDescriptionEditor"
-                    Placeholder="Wklej ogłoszenie..." 
-                    HeightRequest="300" 
-                    VerticalOptions="Start" />
-            
-            <Label Text="lub" 
-                   HorizontalOptions="Center" 
-                   FontSize="16" />
-            
-            <Button Text="Załącz PDF" 
-                    Clicked="OnAttachPdfClicked" />
-            
-            <Button Text="Analizuj" 
-                    Clicked="OnAnalyzeClicked" 
-                    Margin="0,20,0,0" />
-        </VerticalStackLayout>
-    </ScrollView>
+    <Grid>
+        <!-- Główna zawartość -->
+        <ScrollView Padding="20">
+            <VerticalStackLayout Spacing="20">
+                <Label Text="Wygeneruj nowe CV" FontSize="24" />
+                
+                <Editor x:Name="JobDescriptionEditor"
+                        Placeholder="Wklej ogłoszenie..." 
+                        HeightRequest="300" 
+                        VerticalOptions="Start" />
+                
+                <Label Text="lub" 
+                       HorizontalOptions="Center" 
+                       FontSize="16" />
+                
+                <Button Text="Załącz PDF" 
+                        Clicked="OnAttachPdfClicked" />
+                
+                <Button x:Name="AnalyzeButton"
+                        Text="Analizuj" 
+                        Clicked="OnAnalyzeClicked" 
+                        Margin="0,20,0,0" />
+            </VerticalStackLayout>
+        </ScrollView>
+        
+        <!-- Overlay z ActivityIndicator -->
+        <Grid x:Name="LoadingOverlay" 
+              IsVisible="False" 
+              BackgroundColor="#80000000">
+            <VerticalStackLayout VerticalOptions="Center" 
+                                 HorizontalOptions="Center"
+                                 Spacing="10">
+                <ActivityIndicator x:Name="LoadingIndicator" 
+                                   IsRunning="True" 
+                                   Color="White"
+                                   HeightRequest="50"
+                                   WidthRequest="50"/>
+                <Label Text="Analizuję ofertę pracy..." 
+                       TextColor="White" 
+                       FontSize="16"
+                       HorizontalOptions="Center"/>
+            </VerticalStackLayout>
+        </Grid>
+    </Grid>
 </ContentPage>

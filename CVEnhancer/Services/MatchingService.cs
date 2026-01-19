@@ -1,100 +1,171 @@
 ﻿using CVEnhancer.DTO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CVEnhancer.Models;
+using CVEnhancer.Interfaces;
 
 namespace CVEnhancer.Services
 {
     public class MatchingService
     {
         private readonly ExtractionService _extraction;
+        private readonly JobTextPreprocessor _preprocessor;
 
-        public MatchingService(ExtractionService extractionService)
+        public MatchingService(ExtractionService extractionService, JobTextPreprocessor preprocessor)
         {
             _extraction = extractionService;
+            _preprocessor = preprocessor;
         }
 
-        public MatchingResultDTO Match(User userWithData, string jobText, int topN = 3)
+        /// <summary>
+        /// Asynchronicznie dopasowuje elementy użytkownika do oferty pracy.
+        /// </summary>
+        /// <param name="userWithData">Użytkownik z załadowanymi danymi</param>
+        /// <param name="jobText">Tekst oferty pracy</param>
+        /// <param name="topN">Liczba najlepszych dopasowań do zwrócenia</param>
+        /// <returns>Wynik dopasowania</returns>
+        public async Task<MatchingResultDTO> MatchAsync(User userWithData, string jobText, int topN = 10)
         {
-            // 1) Budujemy dokumenty: 0 = job, potem projekty, potem work
-            var docs = new List<(string DocId, string Type, int SourceId, string Title, string Text)>();
+            // 1) Preprocessing tekstu oferty pracy (normalizacja + zamiana aliasów)
+            var preprocessedJob = await _preprocessor.PreprocessAsync(jobText);
 
-            docs.Add(("job", "Job", 0, "JobOffer", jobText));
+            // 2) Wykonaj matching w tle
+            return await Task.Run(() => MatchInternal(userWithData, preprocessedJob, topN));
+        }
 
-            foreach (var p in userWithData.Projects)
+        private MatchingResultDTO MatchInternal(User userWithData, PreprocessedJobText preprocessedJob, int topN)
+        {
+            // 1) Zbierz wszystkie matchable elementy użytkownika
+            var matchables = CollectMatchables(userWithData);
+
+            if (matchables.Count == 0)
             {
-                var text = $"{p.Name} {p.Description} {string.Join(" ", p.Skills.Select(s => s.Name))} {p.ProjectUrl}";
-                docs.Add(($"project:{p.ProjectId}", "Project", p.ProjectId, p.Name, text));
+                return new MatchingResultDTO
+                {
+                    OverallScore = 0,
+                    JobKeywords = preprocessedJob.Tokens.Distinct().Take(25).ToList(),
+                    DetectedJobSkills = preprocessedJob.DetectedSkills,
+                    TopMatches = new(),
+                    MatchesByType = new()
+                };
             }
 
-            foreach (var w in userWithData.WorkExperiences)
+            // 2) Budujemy dokumenty: 0 = job (przetworzona), reszta to matchables
+            var docs = new List<(int Index, IMatchable? Item, string Text)>
             {
-                var title = $"{w.JobTitle} @ {w.CompanyName}";
-                var text = $"{w.CompanyName} {w.JobTitle} {w.Description} {string.Join(" ", w.Skills.Select(s => s.Name))}";
-                docs.Add(($"work:{w.WorkExperienceId}", "WorkExperience", w.WorkExperienceId, title, text));
+                (0, null, preprocessedJob.NormalizedText) // Preprocessed job offer at index 0
+            };
+
+            foreach (var item in matchables)
+            {
+                docs.Add((docs.Count, item, item.GetSearchableText()));
             }
 
-            // 2) Tokenizacja
+            // 3) Tokenizacja
             var tokenized = docs.Select(d => _extraction.Tokenize(d.Text)).ToList();
 
-            // 3) TF-IDF dla całego korpusu
+            // 4) TF-IDF dla całego korpusu
             var vectorizer = new TfidfVectorizer();
             var tfidfVectors = vectorizer.FitTransform(tokenized);
 
-            // 4) Wektor ogłoszenia to indeks 0
+            // 5) Wektor ogłoszenia (indeks 0)
             var jobVec = tfidfVectors[0];
+            var jobKeywords = vectorizer.GetTopTerms(jobVec, 25);
+            var jobKeywordsSet = new HashSet<string>(jobKeywords, StringComparer.OrdinalIgnoreCase);
 
-            // 5) Porównujemy job z każdym innym dokumentem
-            var scored = new List<MatchingItemDTO>();
+            // Dodaj wykryte skille do job keywords set
+            foreach (var skill in preprocessedJob.DetectedSkills)
+            {
+                jobKeywordsSet.Add(skill.ToLowerInvariant());
+            }
+
+            // 6) Oblicz similarity dla każdego elementu
+            var scored = new List<MatchedItemDTO>();
 
             for (int i = 1; i < docs.Count; i++)
             {
-                var score = CosineSimilarity(jobVec, tfidfVectors[i]);
+                var item = docs[i].Item!;
+                var docVec = tfidfVectors[i];
+                
+                var score = CosineSimilarity(jobVec, docVec);
 
-                // matched keywords: przecięcie top słów job i top słów dokumentu
-                var jobTop = vectorizer.GetTopTerms(jobVec, 15);
-                var docTop = vectorizer.GetTopTerms(tfidfVectors[i], 15);
-                var matched = jobTop.Intersect(docTop).Take(10).ToList();
+                // Matched keywords: przecięcie top słów job i dokumentu
+                var docTop = vectorizer.GetTopTerms(docVec, 15);
+                var matchedKeywords = jobKeywords.Intersect(docTop, StringComparer.OrdinalIgnoreCase)
+                    .Take(10)
+                    .ToList();
 
-                scored.Add(new MatchingItemDTO
+                // Matched skills: skille z elementu, które pasują do wykrytych skilli w ofercie
+                var itemSkills = item.GetSkillNames().ToList();
+                var matchedSkills = itemSkills
+                    .Where(skill => 
+                        preprocessedJob.DetectedSkills.Any(ds => 
+                            ds.Equals(skill, StringComparison.OrdinalIgnoreCase)) ||
+                        jobKeywordsSet.Contains(skill) ||
+                        jobKeywords.Any(jk => 
+                            jk.Contains(skill, StringComparison.OrdinalIgnoreCase) ||
+                            skill.Contains(jk, StringComparison.OrdinalIgnoreCase)))
+                    .Distinct()
+                    .ToList();
+
+                // Bonus do score za dopasowane skille
+                var skillBonus = matchedSkills.Count * 0.05; // 5% bonus per matched skill
+                var adjustedScore = Math.Min(1.0, score + skillBonus);
+
+                scored.Add(new MatchedItemDTO
                 {
-                    Type = docs[i].Type,
-                    SourceId = docs[i].SourceId,
-                    Title = docs[i].Title,
-                    Score = score,
-                    MatchedKeywords = matched
+                    Item = item,
+                    Score = adjustedScore,
+                    MatchedKeywords = matchedKeywords,
+                    MatchedSkills = matchedSkills
                 });
             }
 
-            var topProjects = scored
-                .Where(x => x.Type == "Project")
+            // 7) Sortuj i weź top N
+            var topMatches = scored
                 .OrderByDescending(x => x.Score)
                 .Take(topN)
                 .ToList();
 
-            var topWork = scored
-                .Where(x => x.Type == "WorkExperience")
-                .OrderByDescending(x => x.Score)
-                .Take(topN)
-                .ToList();
+            // 8) Grupuj według typu
+            var matchesByType = scored
+                .GroupBy(x => x.Type)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.OrderByDescending(x => x.Score).Take(topN).ToList()
+                );
 
-            // OverallScore: średnia z top wyników (żeby było KPI-friendly)
-            var topAll = scored.OrderByDescending(x => x.Score).Take(Math.Max(1, topN)).ToList();
-            var overall = topAll.Count == 0 ? 0 : topAll.Average(x => x.Score);
-
-            // keywords z ogłoszenia (dla UI)
-            var jobKeywords = vectorizer.GetTopTerms(jobVec, 25);
+            // 9) Overall score: średnia z top matches
+            var overallScore = topMatches.Count == 0 ? 0 : topMatches.Average(x => x.Score);
 
             return new MatchingResultDTO
             {
-                OverallScore = overall,
+                OverallScore = overallScore,
                 JobKeywords = jobKeywords,
-                TopProjects = topProjects,
-                TopWorkExperiences = topWork
+                DetectedJobSkills = preprocessedJob.DetectedSkills,
+                TopMatches = topMatches,
+                MatchesByType = matchesByType
             };
+        }
+
+        /// <summary>
+        /// Zbiera wszystkie elementy IMatchable od użytkownika.
+        /// </summary>
+        private static List<IMatchable> CollectMatchables(User user)
+        {
+            var result = new List<IMatchable>();
+
+            if (user.Projects != null)
+                result.AddRange(user.Projects);
+
+            if (user.WorkExperiences != null)
+                result.AddRange(user.WorkExperiences);
+
+            if (user.Certificates != null)
+                result.AddRange(user.Certificates);
+
+            if (user.Educations != null)
+                result.AddRange(user.Educations);
+
+            return result;
         }
 
         // --- Cosine similarity ---
@@ -102,7 +173,6 @@ namespace CVEnhancer.Services
         {
             if (a.Count == 0 || b.Count == 0) return 0;
 
-            // dot product po wspólnych kluczach
             double dot = 0;
             foreach (var kv in a)
             {
@@ -117,11 +187,12 @@ namespace CVEnhancer.Services
             return dot / (normA * normB);
         }
 
-        // --- Minimalny TF-IDF wewnątrz (bez paczek) ---
+        // --- TF-IDF Vectorizer ---
         private class TfidfVectorizer
         {
             private Dictionary<string, int> _vocab = new(StringComparer.Ordinal);
             private double[] _idf = Array.Empty<double>();
+            private string[] _reverseVocab = Array.Empty<string>();
 
             public List<Dictionary<int, double>> FitTransform(List<List<string>> corpusTokens)
             {
@@ -141,7 +212,6 @@ namespace CVEnhancer.Services
                         continue;
                     }
 
-                    // term frequency
                     var counts = tokens
                         .GroupBy(t => t)
                         .ToDictionary(g => g.Key, g => g.Count(), StringComparer.Ordinal);
@@ -150,10 +220,7 @@ namespace CVEnhancer.Services
                     {
                         if (!_vocab.TryGetValue(term, out int id)) continue;
 
-                        // TF: count / totalTokens
                         var tfValue = (double)count / tokens.Count;
-
-                        // TF-IDF
                         var value = tfValue * _idf[id];
                         if (value != 0)
                             tf[id] = value;
@@ -170,7 +237,8 @@ namespace CVEnhancer.Services
                 return vector
                     .OrderByDescending(kv => kv.Value)
                     .Take(k)
-                    .Select(kv => _vocab.First(x => x.Value == kv.Key).Key) // mało wydajne, ale korpus mały
+                    .Where(kv => kv.Key < _reverseVocab.Length)
+                    .Select(kv => _reverseVocab[kv.Key])
                     .ToList();
             }
 
@@ -186,6 +254,13 @@ namespace CVEnhancer.Services
                             _vocab[token] = idx++;
                     }
                 }
+
+                // Buduj reverse vocab dla szybkiego lookup
+                _reverseVocab = new string[_vocab.Count];
+                foreach (var (term, id) in _vocab)
+                {
+                    _reverseVocab[id] = term;
+                }
             }
 
             private void ComputeIdf(List<List<string>> corpusTokens)
@@ -193,7 +268,6 @@ namespace CVEnhancer.Services
                 int nDocs = corpusTokens.Count;
                 _idf = new double[_vocab.Count];
 
-                // document frequency
                 var df = new int[_vocab.Count];
 
                 foreach (var doc in corpusTokens)
@@ -205,7 +279,6 @@ namespace CVEnhancer.Services
                     }
                 }
 
-                // IDF: log((N + 1) / (df + 1)) + 1  (smoothing)
                 for (int i = 0; i < df.Length; i++)
                 {
                     _idf[i] = Math.Log((nDocs + 1.0) / (df[i] + 1.0)) + 1.0;
