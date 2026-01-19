@@ -126,7 +126,7 @@ namespace CVEnhancer.ViewModels
         {
             if (_session.ActiveUser == null) return;
 
-            var user = await _db.GetUserWithAllData(_session.ActiveUser.UserId);
+            var user = await _db.GetUserWithAllDataMinimal(_session.ActiveUser.UserId);
             if (user == null) return;
 
             // Aktualizuj sesjê

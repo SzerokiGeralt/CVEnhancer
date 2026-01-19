@@ -13,7 +13,7 @@ namespace CVEnhancer.Services
         // Minimalna lista stop-words PL/EN (możesz rozbudować)
         private static readonly HashSet<string> StopWords = new(StringComparer.OrdinalIgnoreCase)
         {
-            "i","oraz","a","an","the","to","of","for","w","we","z","na","do","się","jest","are",
+            "i","and","oraz","a","an","the","to","of","for","w","we","z","na","do","się","jest","are",
             "with","without","in","on","at","as","od","za","o","u","po","from","by","will","would",
             "junior","senior","developer","programista","praca","pracy","team","project","projects"
         };

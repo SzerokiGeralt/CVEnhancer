@@ -37,6 +37,8 @@ namespace CVEnhancer.Services
         public async Task<User?> GetUserWithAllData(int userId)
         {
             return await Db.Users
+                .Where(u => u.UserId == userId)
+                .AsSplitQuery()
                 .Include(u => u.WorkExperiences)
                     .ThenInclude(w => w.Skills)
                 .Include(u => u.Projects)
@@ -45,7 +47,23 @@ namespace CVEnhancer.Services
                     .ThenInclude(p => p.Skills)
                 .Include(u => u.Certificates)
                     .ThenInclude(p => p.Skills)
-                .FirstOrDefaultAsync(u => u.UserId == userId);
+                .FirstOrDefaultAsync();
+        }
+        /// <summary>
+        /// Zwraca bez skilli
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public async Task<User?> GetUserWithAllDataMinimal(int userId)
+        {
+            return await Db.Users
+                .Where(u => u.UserId == userId)
+                .AsSplitQuery()
+                .Include(u => u.WorkExperiences)
+                .Include(u => u.Projects)
+                .Include(u => u.Educations)
+                .Include(u => u.Certificates)
+                .FirstOrDefaultAsync();
         }
 
         public async Task UpdateUser(User user)
@@ -66,19 +84,11 @@ namespace CVEnhancer.Services
             await Db.SaveChangesAsync();
         }
 
-        // ===== SKILLS =====
-        /// <summary>
-        /// Pobiera wszystkie skille z bazy wraz z ich aliasami.
-        /// </summary>
         public async Task<List<Skill>> GetAllSkillsAsync()
         {
             return await Db.Skills.ToListAsync();
         }
 
-        /// <summary>
-        /// Pobiera słownik mapujący aliasy na kanoniczne nazwy skilli.
-        /// Klucz: alias (lowercase), Wartość: kanoniczna nazwa skilla.
-        /// </summary>
         public async Task<Dictionary<string, string>> GetSkillAliasMapAsync()
         {
             var skills = await Db.Skills.ToListAsync();
