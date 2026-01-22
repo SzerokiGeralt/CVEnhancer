@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CVEnhancer.AnalysisResultPage"
+             Title="Wynik analizy">
+
+    <ContentPage.Resources>
+        <!-- Outlined tile style (transparent background + border) -->
+        <Style x:Key="OutlinedTile" TargetType="Border">
+            <Setter Property="Stroke" Value="{AppThemeBinding Light=#D0D5DD, Dark=#2B2F36}" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="StrokeShape">
+                <Setter.Value>
+                    <RoundRectangle CornerRadius="14" />
+                </Setter.Value>
+            </Setter>
+            <Setter Property="BackgroundColor" Value="Transparent" />
+            <Setter Property="Padding" Value="12" />
+        </Style>
+
+        <!-- Section card style -->
+        <Style x:Key="SectionCard" TargetType="Border">
+            <Setter Property="Stroke" Value="{AppThemeBinding Light=#E4E7EC, Dark=#2B2F36}" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="StrokeShape">
+                <Setter.Value>
+                    <RoundRectangle CornerRadius="18" />
+                </Setter.Value>
+            </Setter>
+            <Setter Property="BackgroundColor" Value="Transparent" />
+            <Setter Property="Padding" Value="14" />
+        </Style>
+
+        <Style x:Key="SectionTitle" TargetType="Label">
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="TextColor" Value="{AppThemeBinding Light=#101828, Dark=#FFFFFF}" />
+        </Style>
+
+        <Style x:Key="MutedText" TargetType="Label">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="TextColor" Value="{AppThemeBinding Light=#667085, Dark=#A0A7B4}" />
+        </Style>
+
+        <Style x:Key="PrimaryText" TargetType="Label">
+            <Setter Property="TextColor" Value="{AppThemeBinding Light=#101828, Dark=#FFFFFF}" />
+        </Style>
+
+        <Style x:Key="SubtitleText" TargetType="Label">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="TextColor" Value="{AppThemeBinding Light=#344054, Dark=#C8CDD6}" />
+        </Style>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="14">
+
+            <!-- Header / Summary -->
+            <Border Style="{StaticResource SectionCard}">
+                <VerticalStackLayout Spacing="10">
+
+                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                        <Label Text="Podsumowanie"
+                               Style="{StaticResource SectionTitle}" />
+
+                        <Border Grid.Column="1"
+                                Style="{StaticResource OutlinedTile}"
+                                Padding="10,6">
+                            <Label Text="{Binding OverallScoreText}"
+                                   FontAttributes="Bold"
+                                   Style="{StaticResource PrimaryText}" />
+                        </Border>
+
+                        <Label Grid.Row="1"
+                               Grid.ColumnSpan="2"
+                               Text="{Binding DetectedSkillsText}"
+                               Style="{StaticResource SubtitleText}" />
+                    </Grid>
+
+                    <Label Text="{Binding KeywordsText}"
+                           Style="{StaticResource MutedText}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- WORK -->
+            <Border Style="{StaticResource SectionCard}">
+                <VerticalStackLayout Spacing="10">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="{Binding WorkHeader}" Style="{StaticResource SectionTitle}" />
+                    </Grid>
+
+                    <CollectionView ItemsSource="{Binding WorkItems}"
+                                    SelectionMode="None">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource OutlinedTile}" Margin="0,0,0,10">
+                                    <VerticalStackLayout Spacing="6">
+
+                                        <Grid ColumnDefinitions="*,Auto"
+                                              RowDefinitions="Auto,Auto,Auto"
+                                              ColumnSpacing="12">
+
+                                            <Label Text="{Binding Title}"
+                                                   FontAttributes="Bold"
+                                                   FontSize="14"
+                                                   Style="{StaticResource PrimaryText}" />
+
+                                            <!-- Bigger score badge, right-aligned, vertically centered -->
+                                            <Border Grid.Column="1"
+                                                    Grid.RowSpan="3"
+                                                    VerticalOptions="Center"
+                                                    HorizontalOptions="End"
+                                                    Stroke="{AppThemeBinding Light=#D0D5DD, Dark=#2B2F36}"
+                                                    StrokeThickness="1"
+                                                    BackgroundColor="Transparent"
+                                                    Padding="14,10">
+                                                <Border.StrokeShape>
+                                                    <RoundRectangle CornerRadius="18" />
+                                                </Border.StrokeShape>
+
+                                                <Label Text="{Binding ScoreText}"
+                                                       FontSize="16"
+                                                       FontAttributes="Bold"
+                                                       HorizontalTextAlignment="Center"
+                                                       VerticalTextAlignment="Center"
+                                                       Style="{StaticResource PrimaryText}" />
+                                            </Border>
+
+                                            <Label Grid.Row="1"
+                                                   Text="{Binding Description}"
+                                                   LineBreakMode="TailTruncation"
+                                                   MaxLines="2"
+                                                   Style="{StaticResource SubtitleText}" />
+
+                                            <Label Grid.Row="2"
+                                                   Text="{Binding MatchedSkillsText}"
+                                                   Style="{StaticResource MutedText}" />
+                                        </Grid>
+
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- PROJECTS -->
+            <Border Style="{StaticResource SectionCard}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="{Binding ProjectsHeader}" Style="{StaticResource SectionTitle}" />
+
+                    <CollectionView ItemsSource="{Binding ProjectItems}"
+                                    SelectionMode="None">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource OutlinedTile}" Margin="0,0,0,10">
+                                    <VerticalStackLayout Spacing="6">
+
+                                        <Grid ColumnDefinitions="*,Auto"
+                                              RowDefinitions="Auto,Auto,Auto"
+                                              ColumnSpacing="12">
+
+                                            <Label Text="{Binding Title}"
+                                                   FontAttributes="Bold"
+                                                   FontSize="14"
+                                                   Style="{StaticResource PrimaryText}" />
+
+                                            <!-- Bigger score badge, right-aligned, vertically centered -->
+                                            <Border Grid.Column="1"
+                                                    Grid.RowSpan="3"
+                                                    VerticalOptions="Center"
+                                                    HorizontalOptions="End"
+                                                    Stroke="{AppThemeBinding Light=#D0D5DD, Dark=#2B2F36}"
+                                                    StrokeThickness="1"
+                                                    BackgroundColor="Transparent"
+                                                    Padding="14,10">
+                                                <Border.StrokeShape>
+                                                    <RoundRectangle CornerRadius="18" />
+                                                </Border.StrokeShape>
+
+                                                <Label Text="{Binding ScoreText}"
+                                                       FontSize="16"
+                                                       FontAttributes="Bold"
+                                                       HorizontalTextAlignment="Center"
+                                                       VerticalTextAlignment="Center"
+                                                       Style="{StaticResource PrimaryText}" />
+                                            </Border>
+
+                                            <Label Grid.Row="1"
+                                                   Text="{Binding Description}"
+                                                   LineBreakMode="TailTruncation"
+                                                   MaxLines="2"
+                                                   Style="{StaticResource SubtitleText}" />
+
+                                            <Label Grid.Row="2"
+                                                   Text="{Binding MatchedSkillsText}"
+                                                   Style="{StaticResource MutedText}" />
+                                        </Grid>
+
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- CERTIFICATES -->
+            <Border Style="{StaticResource SectionCard}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="{Binding CertificatesHeader}" Style="{StaticResource SectionTitle}" />
+
+                    <CollectionView ItemsSource="{Binding CertificateItems}"
+                                    SelectionMode="None">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource OutlinedTile}" Margin="0,0,0,10">
+                                    <VerticalStackLayout Spacing="6">
+
+                                        <Grid ColumnDefinitions="*,Auto"
+                                              RowDefinitions="Auto,Auto,Auto"
+                                              ColumnSpacing="12">
+
+                                            <Label Text="{Binding Title}"
+                                                   FontAttributes="Bold"
+                                                   FontSize="14"
+                                                   Style="{StaticResource PrimaryText}" />
+
+                                            <!-- Bigger score badge, right-aligned, vertically centered -->
+                                            <Border Grid.Column="1"
+                                                    Grid.RowSpan="3"
+                                                    VerticalOptions="Center"
+                                                    HorizontalOptions="End"
+                                                    Stroke="{AppThemeBinding Light=#D0D5DD, Dark=#2B2F36}"
+                                                    StrokeThickness="1"
+                                                    BackgroundColor="Transparent"
+                                                    Padding="14,10">
+                                                <Border.StrokeShape>
+                                                    <RoundRectangle CornerRadius="18" />
+                                                </Border.StrokeShape>
+
+                                                <Label Text="{Binding ScoreText}"
+                                                       FontSize="16"
+                                                       FontAttributes="Bold"
+                                                       HorizontalTextAlignment="Center"
+                                                       VerticalTextAlignment="Center"
+                                                       Style="{StaticResource PrimaryText}" />
+                                            </Border>
+
+                                            <Label Grid.Row="1"
+                                                   Text="{Binding Description}"
+                                                   LineBreakMode="TailTruncation"
+                                                   MaxLines="2"
+                                                   Style="{StaticResource SubtitleText}" />
+
+                                            <Label Grid.Row="2"
+                                                   Text="{Binding MatchedSkillsText}"
+                                                   Style="{StaticResource MutedText}" />
+                                        </Grid>
+
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- EDUCATION -->
+            <Border Style="{StaticResource SectionCard}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="{Binding EducationHeader}" Style="{StaticResource SectionTitle}" />
+
+                    <CollectionView ItemsSource="{Binding EducationItems}"
+                                    SelectionMode="None">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource OutlinedTile}" Margin="0,0,0,10">
+                                    <VerticalStackLayout Spacing="6">
+
+                                        <Grid ColumnDefinitions="*,Auto"
+                                              RowDefinitions="Auto,Auto,Auto"
+                                              ColumnSpacing="12">
+
+                                            <Label Text="{Binding Title}"
+                                                   FontAttributes="Bold"
+                                                   FontSize="14"
+                                                   Style="{StaticResource PrimaryText}" />
+
+                                            <!-- Bigger score badge, right-aligned, vertically centered -->
+                                            <Border Grid.Column="1"
+                                                    Grid.RowSpan="3"
+                                                    VerticalOptions="Center"
+                                                    HorizontalOptions="End"
+                                                    Stroke="{AppThemeBinding Light=#D0D5DD, Dark=#2B2F36}"
+                                                    StrokeThickness="1"
+                                                    BackgroundColor="Transparent"
+                                                    Padding="14,10">
+                                                <Border.StrokeShape>
+                                                    <RoundRectangle CornerRadius="18" />
+                                                </Border.StrokeShape>
+
+                                                <Label Text="{Binding ScoreText}"
+                                                       FontSize="16"
+                                                       FontAttributes="Bold"
+                                                       HorizontalTextAlignment="Center"
+                                                       VerticalTextAlignment="Center"
+                                                       Style="{StaticResource PrimaryText}" />
+                                            </Border>
+
+                                            <Label Grid.Row="1"
+                                                   Text="{Binding Description}"
+                                                   LineBreakMode="TailTruncation"
+                                                   MaxLines="2"
+                                                   Style="{StaticResource SubtitleText}" />
+
+                                            <Label Grid.Row="2"
+                                                   Text="{Binding MatchedSkillsText}"
+                                                   Style="{StaticResource MutedText}" />
+                                        </Grid>
+
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Bottom padding -->
+            <BoxView HeightRequest="8" Opacity="0"/>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
