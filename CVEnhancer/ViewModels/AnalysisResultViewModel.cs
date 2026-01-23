@@ -62,15 +62,32 @@ namespace CVEnhancer.ViewModels
             CertificatesHeader = $"Certyfikaty ({cert.Count})";
             EducationHeader = $"Edukacja ({edu.Count})";
 
-            WorkItems = new ObservableCollection<MatchedItemRowVM>(work.Select(x => new MatchedItemRowVM(x)));
-            ProjectItems = new ObservableCollection<MatchedItemRowVM>(proj.Select(x => new MatchedItemRowVM(x)));
-            CertificateItems = new ObservableCollection<MatchedItemRowVM>(cert.Select(x => new MatchedItemRowVM(x)));
-            EducationItems = new ObservableCollection<MatchedItemRowVM>(edu.Select(x => new MatchedItemRowVM(x)));
+            var all = work.Concat(proj).Concat(cert).Concat(edu).ToList();
+            var bestRaw = all.Count == 0 ? 0.0 : all.Max(x => x.Score);
+
+            // bestRaw ~ 0.15 -> t ~ 0, ale weight nadal > 0 (minimalna ulga)
+            double t = Clamp01((bestRaw - 0.12) / (0.55 - 0.12)); // 0..1
+            double weight = 0.20 + 0.80 * t;                      // 0.20..1.00
+            double liftStrength = 0.55;                           // mocniej, bo best jest zwykle niskie
+
+
+            WorkItems = new ObservableCollection<MatchedItemRowVM>(
+                work.Select(x => new MatchedItemRowVM(x, bestRaw, weight, liftStrength)));
+
+            ProjectItems = new ObservableCollection<MatchedItemRowVM>(
+                proj.Select(x => new MatchedItemRowVM(x, bestRaw, weight, liftStrength)));
+
+            CertificateItems = new ObservableCollection<MatchedItemRowVM>(
+                cert.Select(x => new MatchedItemRowVM(x, bestRaw, weight, liftStrength)));
+
+            EducationItems = new ObservableCollection<MatchedItemRowVM>(
+                edu.Select(x => new MatchedItemRowVM(x, bestRaw, weight, liftStrength)));
         }
 
         private static List<MatchedItemDTO> GetList(MatchingResultDTO result, string type)
             => result.MatchesByType.TryGetValue(type, out var list) ? list : new List<MatchedItemDTO>();
 
+        private static double Clamp01(double v) => v < 0 ? 0 : (v > 1 ? 1 : v);
         /// <summary>
         /// Zwraca wszystkie zaznaczone elementy z każdej sekcji.
         /// </summary>
@@ -88,6 +105,9 @@ namespace CVEnhancer.ViewModels
     {
         public MatchedItemDTO Dto { get; }
 
+        public double RawScore { get; }
+        public double DisplayScore { get; }
+
         private bool _isSelected;
         public bool IsSelected
         {
@@ -100,14 +120,28 @@ namespace CVEnhancer.ViewModels
             }
         }
 
-        public MatchedItemRowVM(MatchedItemDTO dto)
+        public MatchedItemRowVM(MatchedItemDTO dto, double bestRaw, double weight, double liftStrength)
         {
             Dto = dto;
+            RawScore = dto.Score;
+
+            if (bestRaw <= 0)
+            {
+                DisplayScore = 0;
+            }
+            else
+            {
+                var normalized = RawScore / bestRaw; // 0..1
+                var display = RawScore + weight * normalized * (1 - bestRaw) * liftStrength;
+                DisplayScore = display < 0 ? 0 : (display > 1 ? 1 : display);
+            }
         }
 
         public string Title => Dto.Title;
         public string Description => Dto.Description;
-        public string ScoreText => $"{Dto.Score:P0}";
+
+        // ✅ teraz pokazujemy "ulgowy" wynik
+        public string ScoreText => $"{DisplayScore:P0}";
 
         public string MatchedSkillsText =>
             Dto.MatchedSkills.Count == 0
@@ -118,4 +152,5 @@ namespace CVEnhancer.ViewModels
         private void OnPropertyChanged([CallerMemberName] string? name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
+
 }
