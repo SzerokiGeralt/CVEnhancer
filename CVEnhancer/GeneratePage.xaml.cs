@@ -51,13 +51,8 @@ public partial class GeneratePage : ContentPage
                     $"• [{m.Type}] {m.Title}: {m.Score:P0}"))
                 : "Brak dopasowañ";
 
-            var msg =
-                $"Ogólne dopasowanie: {result.OverallScore:P0}\n\n" +
-                $"Wykryte skille ({result.DetectedJobSkills.Count}):\n{skillsList}\n\n" +
-                $"S³owa kluczowe:\n{keywordsList}\n\n" +
-                $"Najlepsze dopasowania:\n{topMatchesList}";
+            await Shell.Current.Navigation.PushAsync(new AnalysisResultPage(result)); //Zamiast tworzenia msg i wyswietlania popup, przenies na nowa strone z wynikiem
 
-            await DisplayAlert("Wynik dopasowania", msg, "OK");
         }
         catch (Exception ex)
         {

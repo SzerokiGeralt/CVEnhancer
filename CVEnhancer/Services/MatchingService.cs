@@ -130,7 +130,7 @@ namespace CVEnhancer.Services
                 .GroupBy(x => x.Type)
                 .ToDictionary(
                     g => g.Key,
-                    g => g.OrderByDescending(x => x.Score).Take(topN).ToList()
+                    g => g.OrderByDescending(x => x.Score).ToList() //Chcemy pokazywac wszystko a nie tylko top(n)
                 );
 
             // 9) Overall score: średnia z top matches
