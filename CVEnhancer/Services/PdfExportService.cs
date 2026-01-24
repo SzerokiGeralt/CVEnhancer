@@ -51,7 +51,7 @@ public class PdfExportService
                     if (!string.IsNullOrWhiteSpace(user.JobTitle))
                         col.Item().Text(user.JobTitle).FontSize(12).FontColor(QColors.Black);
 
-                    // ✅ CONTACTS (VERTICAL) - avoids Row overflow
+                    // CONTACTS (VERTICAL) - avoids Row overflow
                     col.Item().PaddingTop(6).Column(c =>
                     {
                         c.Spacing(2);
@@ -84,7 +84,7 @@ public class PdfExportService
                         col.Item().Text(user.ProfessionalSummary).FontColor(QColors.Black);
                     }
 
-                    // ✅ SKILLS as bullet list (safe wrapping)
+                    //SKILLS as bullet list (safe wrapping)
                     if (skills.Count > 0)
                     {
                         col.Item().PaddingTop(10).Text("Skille").SemiBold();
