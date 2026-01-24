@@ -6,9 +6,9 @@ namespace CVEnhancer;
 
 public partial class CvPreviewPage : ContentPage
 {
-    public CvPreviewPage(SessionService session, List<MatchedItemDTO> selected)
+    public CvPreviewPage(SessionService session, PdfExportService pdf, List<MatchedItemDTO> selected)
     {
         InitializeComponent();
-        BindingContext = new CvPreviewViewModel(session, selected);
+        BindingContext = new CvPreviewViewModel(session, pdf, selected);
     }
 }

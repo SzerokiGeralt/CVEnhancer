@@ -12,7 +12,8 @@ namespace CVEnhancer.ViewModels
     public class CvPreviewViewModel
     {
         private readonly SessionService _session;
-
+        private readonly PdfExportService _pdf;
+        private readonly List<MatchedItemDTO> _selected;
         // ===== Personal =====
         public string FullName { get; }
         public string Headline { get; }
@@ -57,9 +58,11 @@ namespace CVEnhancer.ViewModels
         public ICommand BackCommand { get; }
         public ICommand ExportCommand { get; }
 
-        public CvPreviewViewModel(SessionService session, List<MatchedItemDTO> selected)
+        public CvPreviewViewModel(SessionService session, PdfExportService pdf, List<MatchedItemDTO> selected)
         {
             _session = session;
+            _pdf = pdf;
+            _selected = selected;
 
             var user = _session.ActiveUser ?? throw new InvalidOperationException("Brak zalogowanego użytkownika.");
 
@@ -104,7 +107,27 @@ namespace CVEnhancer.ViewModels
 
             ExportCommand = new Command(async () =>
             {
-                await Application.Current!.MainPage.DisplayAlert("Info", "Eksport CV zrobimy w kolejnym kroku.", "OK");
+                try
+                {
+                    var pdfBytes = _pdf.GenerateCvPdfBytes(_selected);
+
+                    var fileName = $"CV_{DateTime.Now:yyyyMMdd_HHmmss}.pdf";
+                    var path = Path.Combine(FileSystem.CacheDirectory, fileName);
+                    File.WriteAllBytes(path, pdfBytes);
+
+                    await Application.Current!.MainPage.DisplayAlert("PDF gotowy", $"Zapisano:\n{path}", "OK");
+
+                    // Opcjonalnie: udostępnij / otwórz
+                    // await Share.Default.RequestAsync(new ShareFileRequest
+                    // {
+                    //     Title = "Udostępnij CV",
+                    //     File = new ShareFile(path)
+                    // });
+                }
+                catch (Exception ex)
+                {
+                    await Application.Current!.MainPage.DisplayAlert("Błąd eksportu", ex.Message, "OK");
+                }
             });
         }
     }
