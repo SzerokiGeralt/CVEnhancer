@@ -1,4 +1,5 @@
 using CVEnhancer.DTO;
+using CVEnhancer.Services;
 using CVEnhancer.ViewModels;
 
 namespace CVEnhancer;
@@ -22,9 +23,14 @@ public partial class AnalysisResultPage : ContentPage
             return;
         }
 
-        await DisplayAlert("Wybrane elementy",
-            $"Zaznaczono: {selected.Count}\n\n" +
-            string.Join("\n", selected.Take(10).Select(x => $"• [{x.Type}] {x.Title}")),
-            "OK");
+        // Pobierz SessionService z DI (najprostsza metoda w MAUI)
+        var session = Application.Current?.Handler?.MauiContext?.Services.GetService<SessionService>();
+        if (session?.ActiveUser == null)
+        {
+            await DisplayAlert("B³¹d", "Brak zalogowanego u¿ytkownika.", "OK");
+            return;
+        }
+
+        await Shell.Current.Navigation.PushAsync(new CvPreviewPage(session, selected));
     }
 }
