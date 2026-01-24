@@ -41,16 +41,17 @@ namespace CVEnhancer.ViewModels
         public ObservableCollection<CvItemRowVM> ProjectItems { get; }
         public ObservableCollection<CvItemRowVM> CertificateItems { get; }
         public ObservableCollection<CvItemRowVM> EducationItems { get; }
-
+        public ObservableCollection<string> Skills { get; }
         public bool HasWork => WorkItems.Count > 0;
         public bool HasProjects => ProjectItems.Count > 0;
         public bool HasCertificates => CertificateItems.Count > 0;
         public bool HasEducation => EducationItems.Count > 0;
-
-        public string WorkHeader => $"Doświadczenie ({WorkItems.Count})";
-        public string ProjectsHeader => $"Projekty ({ProjectItems.Count})";
-        public string CertificatesHeader => $"Certyfikaty ({CertificateItems.Count})";
-        public string EducationHeader => $"Edukacja ({EducationItems.Count})";
+        public bool HasSkills => Skills.Count > 0;
+        public string WorkHeader => "Doświadczenie zawodowe";
+        public string ProjectsHeader => "Projekty";
+        public string CertificatesHeader => "Certyfikaty";
+        public string EducationHeader => "Edukacja";
+        public string SkillsHeader => "Umiejętności i narzędzia";
 
         // ===== Commands =====
         public ICommand BackCommand { get; }
@@ -81,12 +82,19 @@ namespace CVEnhancer.ViewModels
             var proj = selected.Where(x => x.Type == "Project").ToList();
             var cert = selected.Where(x => x.Type == "Certificate").ToList();
             var edu = selected.Where(x => x.Type == "Education").ToList();
-
+            var skills = selected
+                .SelectMany(x => x.MatchedSkills ?? new List<string>())
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .Select(s => s.Trim())
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(s => s)
+                .ToList();
             // Podgląd CV: proste VM bez selekcji i bez score
             WorkItems = new ObservableCollection<CvItemRowVM>(work.Select(x => new CvItemRowVM(x)));
             ProjectItems = new ObservableCollection<CvItemRowVM>(proj.Select(x => new CvItemRowVM(x)));
             CertificateItems = new ObservableCollection<CvItemRowVM>(cert.Select(x => new CvItemRowVM(x)));
             EducationItems = new ObservableCollection<CvItemRowVM>(edu.Select(x => new CvItemRowVM(x)));
+            Skills = new ObservableCollection<string>(skills);
 
             BackCommand = new Command(async () =>
             {
@@ -116,9 +124,5 @@ namespace CVEnhancer.ViewModels
         public string Title => Dto.Title;
         public string Description => Dto.Description;
 
-        public string SkillsText =>
-            Dto.MatchedSkills.Count == 0
-                ? "Skille: —"
-                : $"Skille: {string.Join(", ", Dto.MatchedSkills)}";
     }
 }

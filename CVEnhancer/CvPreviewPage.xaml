@@ -30,6 +30,10 @@
             <Setter Property="Padding" Value="12" />
         </Style>
 
+        <Style x:Key="SkillTile" TargetType="Border" BasedOn="{StaticResource OutlinedTile}">
+            <Setter Property="Padding" Value="10,6" />
+        </Style>
+
         <Style x:Key="H1" TargetType="Label">
             <Setter Property="FontSize" Value="24" />
             <Setter Property="FontAttributes" Value="Bold" />
@@ -54,27 +58,27 @@
 
     </ContentPage.Resources>
 
-    <!-- sticky footer -->
     <Grid RowDefinitions="*,Auto">
 
+        <!-- CONTENT -->
         <ScrollView Grid.Row="0">
             <VerticalStackLayout Padding="16" Spacing="14">
 
-                <!-- HEADER (personal data) -->
+                <!-- PERSONAL DATA (FULL WIDTH) -->
                 <Border Style="{StaticResource SectionCard}">
                     <VerticalStackLayout Spacing="10">
 
                         <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                            <!-- zamiast Image.Clip -->
+
                             <Border StrokeThickness="0">
                                 <Border.StrokeShape>
                                     <RoundRectangle CornerRadius="18" />
                                 </Border.StrokeShape>
 
                                 <Image Source="{Binding ProfileImageSource}"
-                       HeightRequest="64"
-                       WidthRequest="64"
-                       Aspect="AspectFill" />
+                                       HeightRequest="64"
+                                       WidthRequest="64"
+                                       Aspect="AspectFill" />
                             </Border>
 
                             <VerticalStackLayout Grid.Column="1" Spacing="4">
@@ -83,150 +87,175 @@
                             </VerticalStackLayout>
                         </Grid>
 
-                        <!-- contact chips: FlexLayout bez RowSpacing/ColumnSpacing -->
+                        <!-- contact chips -->
                         <FlexLayout Direction="Row"
-                    Wrap="Wrap"
-                    AlignItems="Start"
-                    JustifyContent="Start">
+                                    Wrap="Wrap"
+                                    AlignItems="Start"
+                                    JustifyContent="Start">
 
                             <Border Style="{StaticResource OutlinedTile}"
-                    IsVisible="{Binding HasEmail}"
-                    Padding="10,6"
-                    Margin="0,0,8,8">
+                                    IsVisible="{Binding HasEmail}"
+                                    Padding="10,6"
+                                    Margin="0,0,8,8">
                                 <Label Text="{Binding Email}" Style="{StaticResource Body}" />
                             </Border>
 
                             <Border Style="{StaticResource OutlinedTile}"
-                    IsVisible="{Binding HasPhone}"
-                    Padding="10,6"
-                    Margin="0,0,8,8">
+                                    IsVisible="{Binding HasPhone}"
+                                    Padding="10,6"
+                                    Margin="0,0,8,8">
                                 <Label Text="{Binding Phone}" Style="{StaticResource Body}" />
                             </Border>
 
                             <Border Style="{StaticResource OutlinedTile}"
-                    IsVisible="{Binding HasLinkedIn}"
-                    Padding="10,6"
-                    Margin="0,0,8,8">
+                                    IsVisible="{Binding HasLinkedIn}"
+                                    Padding="10,6"
+                                    Margin="0,0,8,8">
                                 <Label Text="{Binding LinkedIn}" Style="{StaticResource Body}" />
                             </Border>
 
                             <Border Style="{StaticResource OutlinedTile}"
-                    IsVisible="{Binding HasGitHub}"
-                    Padding="10,6"
-                    Margin="0,0,8,8">
+                                    IsVisible="{Binding HasGitHub}"
+                                    Padding="10,6"
+                                    Margin="0,0,8,8">
                                 <Label Text="{Binding GitHub}" Style="{StaticResource Body}" />
                             </Border>
 
                             <Border Style="{StaticResource OutlinedTile}"
-                    IsVisible="{Binding HasPortfolio}"
-                    Padding="10,6"
-                    Margin="0,0,8,8">
+                                    IsVisible="{Binding HasPortfolio}"
+                                    Padding="10,6"
+                                    Margin="0,0,8,8">
                                 <Label Text="{Binding Portfolio}" Style="{StaticResource Body}" />
                             </Border>
 
                         </FlexLayout>
 
                         <Label Text="{Binding Summary}"
-               IsVisible="{Binding HasSummary}"
-               Style="{StaticResource Body}" />
+                               IsVisible="{Binding HasSummary}"
+                               Style="{StaticResource Body}" />
 
                         <Label Text="{Binding SummaryHint}"
-               IsVisible="{Binding ShowSummaryHint}"
-               Style="{StaticResource Muted}" />
+                               IsVisible="{Binding ShowSummaryHint}"
+                               Style="{StaticResource Muted}" />
 
                     </VerticalStackLayout>
                 </Border>
 
+                <!-- BELOW: 2 COLUMNS -->
+                <Grid ColumnDefinitions="0.28*,0.72*" ColumnSpacing="14">
 
-                <!-- WORK -->
-                <Border Style="{StaticResource SectionCard}" IsVisible="{Binding HasWork}">
-                    <VerticalStackLayout Spacing="10">
-                        <Label Text="{Binding WorkHeader}" Style="{StaticResource H2}" />
+                    <!-- LEFT: SKILLS -->
+                    <Border Grid.Column="0"
+                            Style="{StaticResource SectionCard}"
+                            IsVisible="{Binding HasSkills}">
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="{Binding SkillsHeader}" Style="{StaticResource H2}" />
 
-                        <CollectionView ItemsSource="{Binding WorkItems}" SelectionMode="None">
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Style="{StaticResource OutlinedTile}" Margin="0,0,0,10">
-                                        <VerticalStackLayout Spacing="6">
-                                            <Label Text="{Binding Title}" FontAttributes="Bold" FontSize="14" />
-                                            <Label Text="{Binding Description}" Style="{StaticResource Body}" />
-                                            <Label Text="{Binding SkillsText}" Style="{StaticResource Muted}" />
-                                        </VerticalStackLayout>
-                                    </Border>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
+                            <CollectionView ItemsSource="{Binding Skills}"
+                                            SelectionMode="None">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Style="{StaticResource SkillTile}"
+                                                Margin="0,0,0,8">
+                                            <Label Text="{Binding .}" Style="{StaticResource Body}" />
+                                        </Border>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- RIGHT: MAIN SECTIONS -->
+                    <VerticalStackLayout Grid.Column="1" Spacing="14">
+
+                        <!-- WORK -->
+                        <Border Style="{StaticResource SectionCard}" IsVisible="{Binding HasWork}">
+                            <VerticalStackLayout Spacing="10">
+                                <Label Text="{Binding WorkHeader}" Style="{StaticResource H2}" />
+
+                                <CollectionView ItemsSource="{Binding WorkItems}" SelectionMode="None">
+                                    <CollectionView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Style="{StaticResource OutlinedTile}" Margin="0,0,0,10">
+                                                <VerticalStackLayout Spacing="6">
+                                                    <Label Text="{Binding Title}" FontAttributes="Bold" FontSize="14" />
+                                                    <Label Text="{Binding Description}" Style="{StaticResource Body}" />
+                                                </VerticalStackLayout>
+                                            </Border>
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                </CollectionView>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- PROJECTS -->
+                        <Border Style="{StaticResource SectionCard}" IsVisible="{Binding HasProjects}">
+                            <VerticalStackLayout Spacing="10">
+                                <Label Text="{Binding ProjectsHeader}" Style="{StaticResource H2}" />
+
+                                <CollectionView ItemsSource="{Binding ProjectItems}" SelectionMode="None">
+                                    <CollectionView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Style="{StaticResource OutlinedTile}" Margin="0,0,0,10">
+                                                <VerticalStackLayout Spacing="6">
+                                                    <Label Text="{Binding Title}" FontAttributes="Bold" FontSize="14" />
+                                                    <Label Text="{Binding Description}" Style="{StaticResource Body}" />
+                                                </VerticalStackLayout>
+                                            </Border>
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                </CollectionView>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- CERTIFICATES -->
+                        <Border Style="{StaticResource SectionCard}" IsVisible="{Binding HasCertificates}">
+                            <VerticalStackLayout Spacing="10">
+                                <Label Text="{Binding CertificatesHeader}" Style="{StaticResource H2}" />
+
+                                <CollectionView ItemsSource="{Binding CertificateItems}" SelectionMode="None">
+                                    <CollectionView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Style="{StaticResource OutlinedTile}" Margin="0,0,0,10">
+                                                <VerticalStackLayout Spacing="6">
+                                                    <Label Text="{Binding Title}" FontAttributes="Bold" FontSize="14" />
+                                                    <Label Text="{Binding Description}" Style="{StaticResource Body}" />
+                                                </VerticalStackLayout>
+                                            </Border>
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                </CollectionView>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- EDUCATION -->
+                        <Border Style="{StaticResource SectionCard}" IsVisible="{Binding HasEducation}">
+                            <VerticalStackLayout Spacing="10">
+                                <Label Text="{Binding EducationHeader}" Style="{StaticResource H2}" />
+
+                                <CollectionView ItemsSource="{Binding EducationItems}" SelectionMode="None">
+                                    <CollectionView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Style="{StaticResource OutlinedTile}" Margin="0,0,0,10">
+                                                <VerticalStackLayout Spacing="6">
+                                                    <Label Text="{Binding Title}" FontAttributes="Bold" FontSize="14" />
+                                                    <Label Text="{Binding Description}" Style="{StaticResource Body}" />
+                                                </VerticalStackLayout>
+                                            </Border>
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                </CollectionView>
+                            </VerticalStackLayout>
+                        </Border>
+
                     </VerticalStackLayout>
-                </Border>
-
-                <!-- PROJECTS -->
-                <Border Style="{StaticResource SectionCard}" IsVisible="{Binding HasProjects}">
-                    <VerticalStackLayout Spacing="10">
-                        <Label Text="{Binding ProjectsHeader}" Style="{StaticResource H2}" />
-
-                        <CollectionView ItemsSource="{Binding ProjectItems}" SelectionMode="None">
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Style="{StaticResource OutlinedTile}" Margin="0,0,0,10">
-                                        <VerticalStackLayout Spacing="6">
-                                            <Label Text="{Binding Title}" FontAttributes="Bold" FontSize="14" />
-                                            <Label Text="{Binding Description}" Style="{StaticResource Body}" />
-                                            <Label Text="{Binding SkillsText}" Style="{StaticResource Muted}" />
-                                        </VerticalStackLayout>
-                                    </Border>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
-                    </VerticalStackLayout>
-                </Border>
-
-                <!-- CERTIFICATES -->
-                <Border Style="{StaticResource SectionCard}" IsVisible="{Binding HasCertificates}">
-                    <VerticalStackLayout Spacing="10">
-                        <Label Text="{Binding CertificatesHeader}" Style="{StaticResource H2}" />
-
-                        <CollectionView ItemsSource="{Binding CertificateItems}" SelectionMode="None">
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Style="{StaticResource OutlinedTile}" Margin="0,0,0,10">
-                                        <VerticalStackLayout Spacing="6">
-                                            <Label Text="{Binding Title}" FontAttributes="Bold" FontSize="14" />
-                                            <Label Text="{Binding Description}" Style="{StaticResource Body}" />
-                                            <Label Text="{Binding SkillsText}" Style="{StaticResource Muted}" />
-                                        </VerticalStackLayout>
-                                    </Border>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
-                    </VerticalStackLayout>
-                </Border>
-
-                <!-- EDUCATION -->
-                <Border Style="{StaticResource SectionCard}" IsVisible="{Binding HasEducation}">
-                    <VerticalStackLayout Spacing="10">
-                        <Label Text="{Binding EducationHeader}" Style="{StaticResource H2}" />
-
-                        <CollectionView ItemsSource="{Binding EducationItems}" SelectionMode="None">
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Style="{StaticResource OutlinedTile}" Margin="0,0,0,10">
-                                        <VerticalStackLayout Spacing="6">
-                                            <Label Text="{Binding Title}" FontAttributes="Bold" FontSize="14" />
-                                            <Label Text="{Binding Description}" Style="{StaticResource Body}" />
-                                            <Label Text="{Binding SkillsText}" Style="{StaticResource Muted}" />
-                                        </VerticalStackLayout>
-                                    </Border>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
-                    </VerticalStackLayout>
-                </Border>
+                </Grid>
 
                 <BoxView HeightRequest="90" Opacity="0" />
             </VerticalStackLayout>
         </ScrollView>
 
-        <!-- Footer actions -->
+        <!-- FOOTER -->
         <Border Grid.Row="1"
                 Padding="16,12"
                 BackgroundColor="Transparent"
