@@ -1,5 +1,6 @@
 ﻿using CVEnhancer.Services;
 using Microsoft.Extensions.Logging;
+using QuestPDF.Infrastructure;
 
 namespace CVEnhancer
 {
@@ -7,6 +8,8 @@ namespace CVEnhancer
     {
         public static MauiApp CreateMauiApp()
         {
+            QuestPDF.Settings.License = LicenseType.Community;
+
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
@@ -23,6 +26,7 @@ namespace CVEnhancer
             builder.Services.AddSingleton<JobTextPreprocessor>();
             builder.Services.AddSingleton<MatchingService>();
             builder.Services.AddSingleton<AnalysisService>();
+            builder.Services.AddSingleton<PdfExportService>();
 
             // Shell
             builder.Services.AddSingleton<AppShell>();

@@ -1,17 +1,27 @@
 ﻿using CVEnhancer.DTO;
 using CVEnhancer.Services;
 using CVEnhancer.Utils;
+using Microsoft.Maui.ApplicationModel.DataTransfer;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 
+#if WINDOWS
+using Microsoft.Maui.Platform;
+using Windows.Storage;
+using Windows.Storage.Pickers;
+using WinRT.Interop;
+#endif
+
 namespace CVEnhancer.ViewModels
 {
     public class CvPreviewViewModel
     {
         private readonly SessionService _session;
+        private readonly PdfExportService _pdf;
+        private readonly List<MatchedItemDTO> _selected;
 
         // ===== Personal =====
         public string FullName { get; }
@@ -42,11 +52,13 @@ namespace CVEnhancer.ViewModels
         public ObservableCollection<CvItemRowVM> CertificateItems { get; }
         public ObservableCollection<CvItemRowVM> EducationItems { get; }
         public ObservableCollection<string> Skills { get; }
+
         public bool HasWork => WorkItems.Count > 0;
         public bool HasProjects => ProjectItems.Count > 0;
         public bool HasCertificates => CertificateItems.Count > 0;
         public bool HasEducation => EducationItems.Count > 0;
         public bool HasSkills => Skills.Count > 0;
+
         public string WorkHeader => "Doświadczenie zawodowe";
         public string ProjectsHeader => "Projekty";
         public string CertificatesHeader => "Certyfikaty";
@@ -57,9 +69,11 @@ namespace CVEnhancer.ViewModels
         public ICommand BackCommand { get; }
         public ICommand ExportCommand { get; }
 
-        public CvPreviewViewModel(SessionService session, List<MatchedItemDTO> selected)
+        public CvPreviewViewModel(SessionService session, PdfExportService pdf, List<MatchedItemDTO> selected)
         {
             _session = session;
+            _pdf = pdf;
+            _selected = selected;
 
             var user = _session.ActiveUser ?? throw new InvalidOperationException("Brak zalogowanego użytkownika.");
 
@@ -82,6 +96,7 @@ namespace CVEnhancer.ViewModels
             var proj = selected.Where(x => x.Type == "Project").ToList();
             var cert = selected.Where(x => x.Type == "Certificate").ToList();
             var edu = selected.Where(x => x.Type == "Education").ToList();
+
             var skills = selected
                 .SelectMany(x => x.MatchedSkills ?? new List<string>())
                 .Where(s => !string.IsNullOrWhiteSpace(s))
@@ -89,7 +104,7 @@ namespace CVEnhancer.ViewModels
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .OrderBy(s => s)
                 .ToList();
-            // Podgląd CV: proste VM bez selekcji i bez score
+
             WorkItems = new ObservableCollection<CvItemRowVM>(work.Select(x => new CvItemRowVM(x)));
             ProjectItems = new ObservableCollection<CvItemRowVM>(proj.Select(x => new CvItemRowVM(x)));
             CertificateItems = new ObservableCollection<CvItemRowVM>(cert.Select(x => new CvItemRowVM(x)));
@@ -102,11 +117,66 @@ namespace CVEnhancer.ViewModels
                     await Shell.Current.Navigation.PopAsync();
             });
 
-            ExportCommand = new Command(async () =>
-            {
-                await Application.Current!.MainPage.DisplayAlert("Info", "Eksport CV zrobimy w kolejnym kroku.", "OK");
-            });
+            ExportCommand = new Command(async () => await ExportPdfAsync());
         }
+
+        private async Task ExportPdfAsync()
+        {
+            try
+            {
+                var pdfBytes = _pdf.GenerateCvPdfBytes(_selected);
+                var fileName = $"CV_{DateTime.Now:yyyyMMdd_HHmmss}.pdf";
+
+#if WINDOWS
+                var saved = await SavePdfWithPickerWindowsAsync(pdfBytes, fileName);
+                if (saved)
+                {
+                    await Application.Current!.MainPage.DisplayAlert("PDF zapisany", "Plik został zapisany.", "OK");
+                }
+#else
+                // Mobile / macOS: systemowy chooser
+                var tempPath = Path.Combine(FileSystem.CacheDirectory, fileName);
+                File.WriteAllBytes(tempPath, pdfBytes);
+
+                await Share.Default.RequestAsync(new ShareFileRequest
+                {
+                    Title = "Zapisz / Udostępnij CV",
+                    File = new ShareFile(tempPath)
+                });
+#endif
+            }
+            catch (Exception ex)
+            {
+                await Application.Current!.MainPage.DisplayAlert("Błąd eksportu", ex.Message, "OK");
+            }
+        }
+
+#if WINDOWS
+        private static async Task<bool> SavePdfWithPickerWindowsAsync(byte[] bytes, string suggestedFileName)
+        {
+            var picker = new FileSavePicker
+            {
+                SuggestedFileName = suggestedFileName
+            };
+
+            picker.FileTypeChoices.Add("PDF document", new List<string> { ".pdf" });
+
+            // Potrzebujemy HWND okna (WinUI 3)
+            var mauiWindow = Application.Current?.Windows?.FirstOrDefault();
+            if (mauiWindow?.Handler?.PlatformView is not MauiWinUIWindow winuiWindow)
+                throw new InvalidOperationException("Nie znaleziono okna Windows (MauiWinUIWindow).");
+
+            var hwnd = WindowNative.GetWindowHandle(winuiWindow);
+            InitializeWithWindow.Initialize(picker, hwnd);
+
+            StorageFile file = await picker.PickSaveFileAsync();
+            if (file == null)
+                return false; // użytkownik anulował
+
+            await FileIO.WriteBytesAsync(file, bytes);
+            return true;
+        }
+#endif
     }
 
     /// <summary>
@@ -123,6 +193,5 @@ namespace CVEnhancer.ViewModels
 
         public string Title => Dto.Title;
         public string Description => Dto.Description;
-
     }
 }

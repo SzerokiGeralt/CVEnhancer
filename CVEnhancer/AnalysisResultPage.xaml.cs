@@ -23,14 +23,23 @@ public partial class AnalysisResultPage : ContentPage
             return;
         }
 
-        // Pobierz SessionService z DI (najprostsza metoda w MAUI)
-        var session = Application.Current?.Handler?.MauiContext?.Services.GetService<SessionService>();
+        var services = Application.Current?.Handler?.MauiContext?.Services;
+
+        var session = services?.GetService<SessionService>();
         if (session?.ActiveUser == null)
         {
             await DisplayAlert("B³¹d", "Brak zalogowanego u¿ytkownika.", "OK");
             return;
         }
 
-        await Shell.Current.Navigation.PushAsync(new CvPreviewPage(session, selected));
+        var pdf = services?.GetService<PdfExportService>();
+        if (pdf == null)
+        {
+            await DisplayAlert("B³¹d", "Brak PdfExportService (sprawdŸ rejestracjê w MauiProgram).", "OK");
+            return;
+        }
+
+        await Shell.Current.Navigation.PushAsync(new CvPreviewPage(session, pdf, selected));
+
     }
 }

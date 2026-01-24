@@ -266,7 +266,7 @@
                         Command="{Binding BackCommand}"
                         HeightRequest="48"
                         CornerRadius="14" />
-                <Button Text="Eksportuj (wkrótce)"
+                <Button Text="Eksportuj PDF"
                         Command="{Binding ExportCommand}"
                         HeightRequest="48"
                         CornerRadius="14"
